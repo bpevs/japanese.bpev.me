@@ -1,0 +1,28 @@
+{
+  "fmt": {
+    "proseWrap": "never",
+    "singleQuote": true,
+    "semiColons": false,
+    "lineWidth": 120
+  },
+  "compilerOptions": {
+    "lib": ["esnext", "dom", "deno.window"]
+  },
+  "imports": {
+    "std/": "https://deno.land/std@0.200.0/",
+    "hono": "https://deno.land/x/hono/mod.ts",
+    "hono/": "https://deno.land/x/hono/",
+    "@flashcard/adapters": "jsr:@flashcard/adapters@0.0.2",
+    "@flashcard/core": "jsr:@flashcard/core@0.0.2",
+    "@/": "./",
+
+    "kuroshiro": "npm:kuroshiro",
+    "kuroshiro-analyzer-kuromoji": "npm:kuroshiro-analyzer-kuromoji",
+    "sql.js": "npm:sql.js",
+    "jszip": "npm:jszip"
+  },
+  "tasks": {
+    "dev": "deno run --allow-write --allow-net --allow-read --allow-run --allow-env --watch main.tsx",
+    "test": "deno fmt && deno lint && deno test -A"
+  }
+}
