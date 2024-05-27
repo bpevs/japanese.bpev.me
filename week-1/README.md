@@ -19,16 +19,13 @@ Start these after #1. You should be able to recognize words.
 
 ## Why focus on ひらがな?
 
-ひらがな is the most common way to describe the phonetics of words in Japanese. Aside from it being used in general language, some other examples of ひらがな being used in common places is:
-
-- [Furigana](https://en.wikipedia.org/wiki/Furigana) is the method most commonly used for [Kanji](https://en.wikipedia.org/wiki/Kanji) pronunciation aids. These are generally hiragana characters.
-- When typing on your phone, you will typically type the sounds with ひらがな, and then convert it to Katakana or Kanji.
+ひらがな is the most common way to describe the phonetics of words in Japanese. Aside from it being used in general language, some other examples of ひらがな being used in common places are:
 
 <div align="center">
 
 |![furigana](./assets/hiragana-kanji-furigana.png)|![keyboard](./assets/japanese-keyboard.png)|
 |:-:|:-:|
-|furigana as a pronunciation aid|hiragana keyboard|
+|[Furigana](https://en.wikipedia.org/wiki/Furigana) is commonly used as a [Kanji](https://en.wikipedia.org/wiki/Kanji) pronunciation aid. Furigana typically uses ひらがな characters.|When typing on your phone, you will typically type ひらがな, and then convert it to Katakana or Kanji (like autocorrect)|
 
 </div>
 
@@ -38,4 +35,4 @@ Start these after #1. You should be able to recognize words.
 
 **Kanji** - We will slowly be learning kanji as we expand our vocabulary. We won't be ignoring kanji. We just won't be focusing on it.
 
-**Romaji** - In this course, we will little to no romaji, in order to prevent it from becoming a crutch, because for pronunciation, we should primarly rely on ひらがな. For learning ひらがな, we will try to lean on audio as much as we can, instead of Romaji.
+**Romaji** - In this course, we will little to no romaji to prevent it from becoming a crutch. For pronunciation, we should primarly rely on ひらがな. Even for learning ひらがな, we will try to lean on audio as much as we can, instead of Romaji.
