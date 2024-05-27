@@ -17,6 +17,7 @@
     "jsxImportSource": "npm:solid-js"
   },
   "tasks": {
+    "build": "deno run -A build.ts build",
     "dev": "deno run -A build.ts dev",
     "test": "deno fmt && deno lint && deno test -A"
   }
