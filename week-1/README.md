@@ -1,6 +1,6 @@
 # Week 1 - Hiragana (ひらがな)
 
-One of the first things you will hear about Japanese is the 3 different systems of writing: Hiragana, Katakana, and Kanji characters. You will also hear about Romaji, the romanization system for [Japanese](https://en.wikipedia.org/wiki/Romanization_of_Japanese). We will be focusing on ひらがな; the most common phonetic lettering system. 
+One of the first things you will hear about Japanese is the 3 different systems of writing: Hiragana, Katakana, and Kanji characters. You will also hear about Romaji, the romanization system for [Japanese](https://en.wikipedia.org/wiki/Romanization_of_Japanese). We will be focusing on ひらがな; the most common phonetic lettering system.
 
 # Goals
 
@@ -23,9 +23,9 @@ Start these after #1. You should be able to recognize words.
 
 <div align="center">
 
-|![furigana](./assets/hiragana-kanji-furigana.png)|![keyboard](./assets/japanese-keyboard.png)|
-|:-:|:-:|
-|[Furigana](https://en.wikipedia.org/wiki/Furigana) is commonly used as a [Kanji](https://en.wikipedia.org/wiki/Kanji) pronunciation aid. Furigana typically uses ひらがな characters.|When typing on your phone, you will typically type ひらがな, and then convert it to Katakana or Kanji (like autocorrect)|
+|                                                                   ![furigana](./assets/hiragana-kanji-furigana.png)                                                                   |                                       ![keyboard](./assets/japanese-keyboard.png)                                        |
+| :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------: |
+| [Furigana](https://en.wikipedia.org/wiki/Furigana) is commonly used as a [Kanji](https://en.wikipedia.org/wiki/Kanji) pronunciation aid. Furigana typically uses ひらがな characters. | When typing on your phone, you will typically type ひらがな, and then convert it to Katakana or Kanji (like autocorrect) |
 
 </div>
 

@@ -1,0 +1,14 @@
+{
+  "imports": {
+    "kuroshiro": "npm:kuroshiro",
+    "kuroshiro-analyzer-kuromoji": "npm:kuroshiro-analyzer-kuromoji",
+
+    "solid-js": "npm:solid-js",
+    "solid-js/web": "npm:solid-js/web",
+    "solid-js/store": "npm:solid-js/store",
+    "solid-js/router": "npm:@solidjs/router",
+
+    "@flashcard/adapters": "../20.21 flashcards/adapters/mod.ts",
+    "@flashcard/schedulers": "../20.21 flashcards/schedulers/mod.ts"
+  }
+}

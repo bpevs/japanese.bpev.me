@@ -1,0 +1,23 @@
+{
+  "fmt": {
+    "proseWrap": "never",
+    "singleQuote": true,
+    "semiColons": false,
+    "lineWidth": 120
+  },
+  "compilerOptions": {
+    "lib": [
+      "deno.ns",
+      "dom",
+      "dom.iterable",
+      "dom.asynciterable",
+      "esnext"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "npm:solid-js"
+  },
+  "tasks": {
+    "dev": "deno run -A build.ts dev",
+    "test": "deno fmt && deno lint && deno test -A"
+  }
+}
