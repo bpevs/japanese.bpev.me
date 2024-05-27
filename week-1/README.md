@@ -1,11 +1,21 @@
 # Week 1 - Hiragana (ひらがな)
 
-One of the first things you will hear about Japanese is the 3 different methods of writing characters: Hiragana and Katakana alphabets, and Kanji characters. You will also hear about Romaji, the romanization system for [Japanese](https://en.wikipedia.org/wiki/Romanization_of_Japanese).
+One of the first things you will hear about Japanese is the 3 different systems of writing: Hiragana, Katakana, and Kanji characters. You will also hear about Romaji, the romanization system for [Japanese](https://en.wikipedia.org/wiki/Romanization_of_Japanese). We will be focusing on ひらがな; the most common phonetic lettering system. 
 
-# Summary
+# Goals
 
-1. Write and type some ひらがな
-2. Start with our first noun flashcards
+### 1. Write and type ひらがな
+
+1. Kana will be split into sets. Maybe try to do 1-3 new sets a day.
+2. Listen to each audio flashcard and try to write the character a few times until completing daily SRS.
+3. Once completing flashcards, see the document for words using those characters. Practice writing.
+4. Practice typing those words in your phone and computer.
+
+### 2. Start with our first noun flashcards
+
+Start these after #1. You should be able to recognize words.
+
+# Explanation
 
 ### Why focus on ひらがな?
 
@@ -14,6 +24,14 @@ One of the first things you will hear about Japanese is the 3 different methods 
 - [Furigana](https://en.wikipedia.org/wiki/Furigana) is the method most commonly used for [Kanji](https://en.wikipedia.org/wiki/Kanji) pronunciation aids. These are generally hiragana characters.
 - When typing on your phone, you will typically type the sounds with ひらがな, and then convert it to Katakana or Kanji.
 
+<div align="center">
+  
+|![furigana](./assets/hiragana-kanji-furigana.png)|![keyboard](./assets/japanese-keyboard.pn)|
+|:-:|:-:|
+|furigana as a pronunciation aid|hiragana keyboard|
+
+</div>
+
 ### What about Katakana, Kanji, and Romaji?
 
 **Katakana** - Katakana represents that a word is a borrowed foreign word. So for an English speaker, it's tempting to jump into Katakana first, because you can often understand words that you sound out. I don't have anything particularly against doing that. However, since the sounds are entirely the same, I think it gets confusing to learn ひらがな and katakana at the same time. For this reason, we will intentionally try to avoid katakana until we are comfortable with ひらがな.
@@ -21,19 +39,3 @@ One of the first things you will hear about Japanese is the 3 different methods 
 **Kanji** - We will slowly be learning kanji as we expand our vocabulary. We won't be ignoring kanji. We just won't be focusing on it.
 
 **Romaji** - In this course, we will little to no romaji, in order to prevent it from becoming a crutch, because for pronunciation, we should primarly rely on ひらがな. For learning ひらがな, we will try to lean on audio as much as we can, instead of Romaji.
-
-# 1. Write and type ひらがな
-
-Here's how it'll work:
-
-- See the page showing a set of characters
-- Listen to an audio flashcards for those characters
-- Write the character a few times
-- Some example words using these characters will be in the answer. So practice writing those.
-- Also practice typing after if you have some time. It's easier on phone.
-
-# 2. Start with our first noun flashcards
-
-Do this after #1. You should be able to recognize words.
-
-
