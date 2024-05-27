@@ -8,7 +8,7 @@
     "solid-js/store": "npm:solid-js/store",
     "solid-js/router": "npm:@solidjs/router",
 
-    "@flashcard/adapters": "../20.21 flashcards/adapters/mod.ts",
-    "@flashcard/schedulers": "../20.21 flashcards/schedulers/mod.ts"
+    "@flashcard/adapters": "jsr:@flashcard/adapters@0.0.3",
+    "@flashcard/schedulers": "jsr:@flashcard/schedulers@0.0.3"
   }
 }
