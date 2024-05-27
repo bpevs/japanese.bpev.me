@@ -26,7 +26,7 @@ Start these after #1. You should be able to recognize words.
 
 <div align="center">
   
-|![furigana](./assets/hiragana-kanji-furigana.png)|![keyboard](./assets/japanese-keyboard.pn)|
+|![furigana](./assets/hiragana-kanji-furigana.png)|![keyboard](./assets/japanese-keyboard.png)|
 |:-:|:-:|
 |furigana as a pronunciation aid|hiragana keyboard|
 
