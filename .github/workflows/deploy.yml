@@ -31,12 +31,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Deno
-        # uses: denoland/setup-deno@v1
-        uses: denoland/setup-deno@004814556e37c54a2f6e31384c9e18e983317366
+      - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - name: Build Deno
+      - name: Build
         run: deno run -A build.ts build
       - name: Setup Pages
         uses: actions/configure-pages@v5
