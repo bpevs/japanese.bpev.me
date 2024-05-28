@@ -85,7 +85,7 @@ export default function Week1() {
                 transform: translateX(-50%);
               `}
             >
-              <h1 class='pointer'>👍</h1>
+              <h1 class='pointer'>Write what you hear!</h1>
             </div>
             <div
               class='f-headline pointer'
