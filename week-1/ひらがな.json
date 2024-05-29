@@ -4,10 +4,10 @@
   "desc": "Learn ひらがな",
   "meta": {
     "voice_id_azure": "ja-JP-NanamiNeural",
-    "tts_source_column": "字"
+    "tts_source_column": "ひらがな"
   },
-  "fields": ["行", "字", "ローマ字"],
-  "watch": ["字"],
+  "fields": ["行", "ひらがな", "ローマ字"],
+  "watch": ["ひらがな"],
   "notes": [
     ["あ", "あ", "a"],
     ["あ", "い", "i"],
