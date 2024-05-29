@@ -1,6 +1,6 @@
 # Japanese from First Principles
 
-As of creating this repo, I don't speak Japanese. This is a collection of notes and tools that I will build as I learn Japanese.
+As of creating this project, I don't speak Japanese. This is a collection of notes and tools that I will build as I learn Japanese.
 
 ## Methodology
 

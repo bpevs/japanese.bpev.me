@@ -207,15 +207,22 @@ export default function Week1() {
           </Show>
           <Show when={currCard()}>
             <div
-              class='ba ma1 relative'
+              class='ba ma1 relative flex flex-column justify-center'
               style={`width: 256px; height: 256px;`}
             >
               <Show when={showAnswer()}>
-                <div
-                  class={`${isInfiniteMode() ? 'f4' : 'f2'}`}
-                  style='position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);'
+                <p
+                  class={`ma0 ${isInfiniteMode() ? 'f4' : 'f2'}`}
                   innerHTML={currCard().render().answer}
                 />
+                <Show when={isInfiniteMode()}>
+                  <p class='ma0'>
+                    {currCard().note.content.英語}
+                    <Show when={currCard().note.content.漢字}>
+                      {` - ${currCard().note.content.漢字}`}
+                    </Show>
+                  </p>
+                </Show>
               </Show>
               <button
                 class='f5'
