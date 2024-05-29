@@ -30,7 +30,7 @@ export default function Page({ week, children }) {
             location.hash = EXERCISE
           }}
         >
-          exercises
+          exercise 1
         </div>
       </nav>
       <Show when={tab() === README}>
