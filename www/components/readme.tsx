@@ -14,7 +14,7 @@ export default function Readme({ week }: { week?: string }) {
         when={!readme.loading}
         fallback={
           <h1
-            class='absolute f3 f2-m f1-l fw2 black-90 mv3'
+            class='absolute f3 f2-m f1-l fw2 black mv3'
             style='top: 50%; left: 50%; transform: translate(-50%, -50%);'
           >
             loading...

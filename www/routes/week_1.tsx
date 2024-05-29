@@ -23,7 +23,7 @@ export default function Week1() {
   let selectRef
   let canvas
 
-  const isVertical = () => window.innerHeight > window.innerWidth
+  const isVertical = () => globalThis.innerHeight > globalThis.innerWidth
 
   const [data] = createResource(async () => {
     const baseURL = `${window.location.origin}/week-1/`
@@ -118,14 +118,17 @@ export default function Week1() {
       <article class='pa3 pa5-ns tc' onClick={() => selectRef.open = false}>
         <div class='tl measure pb4' style='margin: auto;'>
           <h3>Instructions</h3>
-          <p>Select 1-3 new sets of ひらがな to learn per day (one at a time!).</p>
+          <p>Select 1-2 new sets of ひらがな to learn per day (one at a time!).</p>
           <p>
             It could be helpful to also add the previous day's sets as well. However, the practice words at the end of
             the new characters will also include all prior sets, so it's not strictly necessary!
           </p>
           <Show when={isInfiniteMode()}>
             <h3>Finished!</h3>
-            <p class='b'>Here are some words to practice!</p>
+            <p class='b'>
+              Here are some words to practice! Don't worry about remembering the meanings or kanji of the words. We are
+              just practicing sounds! Those are just there so that maybe you'll recognize them later.
+            </p>
             <p>(Note: this list will repeat indefinitely)</p>
           </Show>
           <p class='ma4 tc'>
@@ -134,7 +137,7 @@ export default function Week1() {
               type='radio'
               id='write'
               name='input-type'
-              value='write'
+              value='input-write'
               class='mh1'
               checked={practiceType() === 'write'}
               onClick={[setPracticeType, 'write']}
@@ -145,12 +148,23 @@ export default function Week1() {
               type='radio'
               id='type'
               name='input-type'
-              value='type'
+              value='input-type'
               class='mh1'
               checked={practiceType() === 'type'}
               onClick={[setPracticeType, 'type']}
             />
-            <label for='type'>type</label>
+            <label class='mr3' for='type'>type</label>
+
+            <input
+              type='radio'
+              id='none'
+              name='input-type'
+              value='input-none'
+              class='mh1'
+              checked={practiceType() === 'none'}
+              onClick={[setPracticeType, 'none']}
+            />
+            <label for='none'>none</label>
           </p>
           <ui-multiselect
             style='width: 100%;'
@@ -192,7 +206,7 @@ export default function Week1() {
           </Show>
           <Show when={practiceType() === 'type'}>
             <div
-              class='ba ma1 relative'
+              class='ma1 relative'
               style='width: 256px; height: 256px;'
             >
               <input
@@ -208,7 +222,7 @@ export default function Week1() {
           <Show when={currCard()}>
             <div
               class='ba ma1 relative flex flex-column justify-center'
-              style={`width: 256px; height: 256px;`}
+              style={`width: 256px; height: 256px; min-width: 256px; min-height: 256px;`}
             >
               <Show when={showAnswer()}>
                 <p

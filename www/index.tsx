@@ -37,7 +37,7 @@ function Link({ name, href }) {
 function Layout(props) {
   return (
     <div>
-      <header class='bg-black-90 w-100 ph3 pv3 pv4-ns ph4-m ph5-l'>
+      <header class='bg-black w-100 ph3 pv3 pv4-ns ph4-m ph5-l'>
         <nav class='f6 fw6 ttu tracked'>
           <Link href='/' name='Home' />
           <Link href='/week-1' name='Week 1' />

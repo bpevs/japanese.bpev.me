@@ -15,7 +15,7 @@ export default new Scheduler<ScheduleCache, Quality>({
   },
 
   // It's infinite.
-  filter({ repetition = 0 }: ScheduleCache) {
+  filter({ _repetition = 0 }: ScheduleCache) {
     return true
   },
 

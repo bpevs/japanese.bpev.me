@@ -29,11 +29,12 @@ if (Deno.args[0] === 'build') {
   await esbuild.build(options)
   esbuild.stop()
 } else if (Deno.args[0] === 'dev') {
-  let ctx = await esbuild.context(options)
+  const ctx = await esbuild.context(options)
 
-  let { host, port } = await ctx.serve({
+  const { host, port } = await ctx.serve({
     servedir: '.',
     fallback: './index.html',
     port: 3000,
   })
+  console.log('http://' + host + ':' + port)
 }

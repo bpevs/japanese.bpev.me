@@ -11,7 +11,7 @@ export default function Page({ week, children }) {
 
   return (
     <div>
-      <nav class='ph3 ph4-m ph5-l pb3 pb4-ns bg-black-90'>
+      <nav class='ph3 ph4-m ph5-l pb3 pb4-ns bg-black'>
         <div
           class={`link dim white b f6 f5-ns dib mr3` +
             ((tab() === README) ? ' underline' : '')}
