@@ -1,3 +1,4 @@
+import 'npm:core-js/actual/array/to-sorted'
 import { lazy } from 'solid-js'
 import { render } from 'solid-js/web'
 import { A, Route, Router } from 'solid-js/router'
