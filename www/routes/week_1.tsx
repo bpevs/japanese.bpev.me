@@ -219,7 +219,7 @@ export default function Week1() {
               />
             </div>
           </Show>
-          <Show when={currCard()}>
+          <Show when={data() && currCard()}>
             <div
               class='ba ma1 relative flex flex-column justify-center'
               style={`width: 256px; height: 256px; min-width: 256px; min-height: 256px;`}
@@ -229,7 +229,7 @@ export default function Week1() {
                   class={`ma0 ${isInfiniteMode() ? 'f4' : 'f2'}`}
                   innerHTML={currCard().render().answer}
                 />
-                <Show when={isInfiniteMode()}>
+                <Show when={wordData() && currCard() && isInfiniteMode()}>
                   <p class='ma0'>
                     {currCard().note.content.英語}
                     <Show when={currCard().note.content.漢字}>
