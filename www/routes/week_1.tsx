@@ -20,6 +20,8 @@ export default function Week1() {
   let audioRef
   let canvas
 
+  const isVertical = () => window.innerHeight > window.innerWidth
+
   const [data] = createResource(async () => {
     const baseURL = `${window.location.origin}/week-1/`
     const resp = await fetch(baseURL + 'ひらがな.json')
@@ -129,20 +131,27 @@ export default function Week1() {
           Finished! Now practice some words using these characters until you feel comfortable!
         </p>
 
-        <div class='relative' style='width: 512px; height: 256px; margin: auto;'>
+        <div
+          class='relative'
+          style={`
+            width: ${isVertical() ? '256px' : '512px'};
+            height: ${isVertical() ? '512px' : '256px'};
+            margin: auto;
+          `}
+        >
           <canvas
             ref={canvas}
             width='256'
             height='256'
             class='ba'
-            style='top: 0; left: 0; position: absolute; width: 256px; height: 254px;'
+            style='top: 0; left: 0; position: absolute; width: 254px; height: 254px;'
           />
           <Show when={currCard()}>
             <div
               class='absolute ba'
               style={`
-                top: 0;
-                left: 257px;
+                top: ${isVertical() ? '257px' : '0'};
+                left: ${isVertical() ? '0' : '257px'};
                 width: 256px;
                 height: 256px;
               `}
