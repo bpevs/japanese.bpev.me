@@ -3,7 +3,8 @@
     "proseWrap": "never",
     "singleQuote": true,
     "semiColons": false,
-    "lineWidth": 120
+    "lineWidth": 120,
+    "exclude": ["dist", "audio"]
   },
   "compilerOptions": {
     "lib": [

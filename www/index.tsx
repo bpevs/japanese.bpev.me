@@ -2,6 +2,21 @@ import { lazy } from 'solid-js'
 import { render } from 'solid-js/web'
 import { A, Route, Router } from 'solid-js/router'
 import { useLocation } from 'solid-js/router'
+import { Badge, Icon, IconButton, Multiselect } from '@inro/ui'
+
+customElements.define('ui-badge', Badge)
+customElements.define('ui-icon', Icon)
+customElements.define('ui-icon-button', IconButton)
+customElements.define('ui-multiselect', Multiselect)
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'ui-badge': Badge
+    'ui-icon': Icon
+    'ui-icon-button': IconButton
+    'ui-multiselect': Multiselect
+  }
+}
 
 import Home from './routes/home.tsx'
 import Week1 from './routes/week_1.tsx'

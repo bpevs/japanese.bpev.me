@@ -9,6 +9,7 @@
     "solid-js/router": "npm:@solidjs/router",
 
     "@flashcard/adapters": "jsr:@flashcard/adapters@0.0.3",
-    "@flashcard/schedulers": "jsr:@flashcard/schedulers@0.0.3"
+    "@flashcard/schedulers": "jsr:@flashcard/schedulers@0.0.3",
+    "@inro/ui": "jsr:@inro/ui@0.0.1-alpha-1"
   }
 }

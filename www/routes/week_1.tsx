@@ -15,9 +15,12 @@ export default function Week1() {
   const [currCard, setCurrCard] = createSignal(null)
   const [showAnswer, setShowAnswer] = createSignal(false)
   const [isInfiniteMode, setInfiniteMode] = createSignal(false)
+  const [practiceInput, setPracticeInput] = createSignal('')
+  const [practiceType, setPracticeType] = createSignal('write')
   const [pad, setPad] = createSignal()
-  const [row, setRow] = createSignal('あか')
+  const [selectedRows, setSelectedRows] = createSignal(['Set 1: あか'])
   let audioRef
+  let selectRef
   let canvas
 
   const isVertical = () => window.innerHeight > window.innerWidth
@@ -33,17 +36,50 @@ export default function Week1() {
     return await resp.json()
   })
 
-  onMount(() => {
-    console.log(canvas)
-    if (canvas) {
+  const done = (e) => {
+    e.stopPropagation()
+    deck.answerCurrent(1)
+    setShowAnswer(false)
+    setCurrCard(deck.getNext())
+    setPracticeInput('')
+    if (pad()) pad().clear()
+  }
+
+  function onSelect(e) {
+    const items = (e.target as HTMLInputElement).value
+    setSelectedRows(items)
+  }
+
+  createEffect(() => {
+    if (canvas && practiceType() === 'write') {
       setPad(new SignaturePad(canvas))
+    }
+  })
+
+  const keyEvent = (e) => {
+    // keycode === 'enter'
+    if (event.keyCode === 13) {
+      if (selectRef.open) selectRef.open = false
+      else if (!showAnswer()) setShowAnswer(true)
+      else done(e)
+    }
+    // keycode === 'spacebar'
+    if ((event.keyCode === 32) && audioRef) audioRef.play()
+  }
+
+  onMount(() => {
+    if (selectRef) selectRef.addEventListener('change', onSelect)
+    addEventListener('keydown', keyEvent)
+    return () => {
+      removeEventListener('keydown', keyEvent)
+      if (selectRef) selectRef.removeEventListener('change', onSelect)
     }
   })
 
   createEffect(() => {
     if (data.loading) return null
     const currData = { ...data() }
-    currData.notes = currData.notes.filter(([cat]) => row().includes(cat))
+    currData.notes = currData.notes.filter(([cat]) => selectedRows().join().includes(cat))
     deck = fromOBJ(currData, { 'sortField': 'ひらがな' })
     deck.addTemplate(
       'Listening',
@@ -58,7 +94,7 @@ export default function Week1() {
   createEffect(() => {
     if (!data.loading && !currCard()) {
       const currData = { ...wordData() }
-      currData.notes = currData.notes.filter(([cat]) => row().includes(cat))
+      currData.notes = currData.notes.filter(([cat]) => selectedRows().join().includes(cat))
       deck = fromOBJ(currData, { 'sortField': 'ひらがな' })
       deck.addTemplate(
         'Listening',
@@ -77,43 +113,52 @@ export default function Week1() {
     }
   })
 
-  const done = (e) => {
-    e.stopPropagation()
-    deck.answerCurrent(1)
-    setShowAnswer(false)
-    setCurrCard(deck.getNext())
-    if (pad()) pad().clear()
-  }
-
   return (
     <Page week='week-1'>
-      <article class='pa3 pa5-ns tc'>
-        <div>
-          <select
-            name='row'
-            multiple
-            onChange={(e) => {
-              const options = e.target.options
-              let selectedValues = ''
-              for (let i = 0; i < options.length; i++) {
-                if (options[i].selected) {
-                  selectedValues += options[i].value
-                }
-              }
-              setRow(selectedValues)
-            }}
-          >
-            <For each={rows}>
-              {(r, i) => (
-                <option
-                  selected={row().includes(r)}
-                  value={r}
-                >
-                  Set {i() + 1}: {r}
-                </option>
-              )}
-            </For>
-          </select>
+      <article class='pa3 pa5-ns tc' onClick={() => selectRef.open = false}>
+        <div class='tl measure pb4' style='margin: auto;'>
+          <h3>Instructions</h3>
+          <p>Select 1-3 new sets of ひらがな to learn per day (one at a time!).</p>
+          <p>
+            It could be helpful to also add the previous day's sets as well. However, the practice words at the end of
+            the new characters will also include all prior sets, so it's not strictly necessary!
+          </p>
+          <Show when={isInfiniteMode()}>
+            <h3>Finished!</h3>
+            <p class='b'>Here are some words to practice!</p>
+            <p>(Note: this list will repeat indefinitely)</p>
+          </Show>
+          <p class='ma4 tc'>
+            <span class='mh2'>Input type to practice:</span>
+            <input
+              type='radio'
+              id='write'
+              name='input-type'
+              value='write'
+              class='mh1'
+              checked={practiceType() === 'write'}
+              onClick={[setPracticeType, 'write']}
+            />
+            <label class='mr3' for='write'>write</label>
+
+            <input
+              type='radio'
+              id='type'
+              name='input-type'
+              value='type'
+              class='mh1'
+              checked={practiceType() === 'type'}
+              onClick={[setPracticeType, 'type']}
+            />
+            <label for='type'>type</label>
+          </p>
+          <ui-multiselect
+            style='width: 100%;'
+            ref={(ref) => selectRef = ref}
+            value={selectedRows()}
+            options={rows.map((row, i) => `Set ${i + 1}: ${row}`)}
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
 
         <Show when={currCard()}>
@@ -126,39 +171,48 @@ export default function Week1() {
             />
           </div>
         </Show>
-
-        <p style={`visibility: ${isInfiniteMode() ? 'visible' : 'hidden'}`}>
-          Finished! Now practice some words using these characters until you feel comfortable!
-        </p>
-
         <div
           class='relative'
           style={`
-            width: ${isVertical() ? '256px' : '512px'};
-            height: ${isVertical() ? '512px' : '256px'};
+            display: flex;
+            align-items: start;
+            justify-content: center;
             margin: auto;
+            flex-wrap: wrap;
           `}
         >
-          <canvas
-            ref={canvas}
-            width='256'
-            height='256'
-            class='ba'
-            style='top: 0; left: 0; position: absolute; width: 254px; height: 254px;'
-          />
+          <Show when={practiceType() === 'write'}>
+            <canvas
+              ref={canvas}
+              width='256'
+              height='256'
+              class='ba ma1'
+              style='width: 254px; height: 254px;'
+            />
+          </Show>
+          <Show when={practiceType() === 'type'}>
+            <div
+              class='ba ma1 relative'
+              style='width: 256px; height: 256px;'
+            >
+              <input
+                autofocus
+                value={practiceInput()}
+                onInput={(e) => setPracticeInput(e.target.value)}
+                disabled={showAnswer()}
+                class='w-90 f2 ba'
+                style='position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);'
+              />
+            </div>
+          </Show>
           <Show when={currCard()}>
             <div
-              class='absolute ba'
-              style={`
-                top: ${isVertical() ? '257px' : '0'};
-                left: ${isVertical() ? '0' : '257px'};
-                width: 256px;
-                height: 256px;
-              `}
+              class='ba ma1 relative'
+              style={`width: 256px; height: 256px;`}
             >
               <Show when={showAnswer()}>
                 <div
-                  class={`${(currCard().content.ひらがな > 2) ? 'f3' : 'f2'}`}
+                  class={`${isInfiniteMode() ? 'f4' : 'f2'}`}
                   style='position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);'
                   innerHTML={currCard().render().answer}
                 />
