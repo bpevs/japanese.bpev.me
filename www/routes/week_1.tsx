@@ -131,8 +131,8 @@ export default function Week1() {
             </p>
             <p>(Note: this list will repeat indefinitely)</p>
           </Show>
-          <p class='ma4 tc'>
-            <span class='mh2'>Input type to practice:</span>
+          <div class='ma4 tc'>
+            <p class='ma1'>Input type to practice:</p>
             <input
               type='radio'
               id='write'
@@ -142,7 +142,7 @@ export default function Week1() {
               checked={practiceType() === 'write'}
               onClick={[setPracticeType, 'write']}
             />
-            <label class='mr3' for='write'>write</label>
+            <label class='mr3' for='write'>writing</label>
 
             <input
               type='radio'
@@ -153,7 +153,7 @@ export default function Week1() {
               checked={practiceType() === 'type'}
               onClick={[setPracticeType, 'type']}
             />
-            <label class='mr3' for='type'>type</label>
+            <label class='mr3' for='type'>typing</label>
 
             <input
               type='radio'
@@ -165,7 +165,7 @@ export default function Week1() {
               onClick={[setPracticeType, 'none']}
             />
             <label for='none'>none</label>
-          </p>
+          </div>
           <ui-multiselect
             style='width: 100%;'
             ref={(ref) => selectRef = ref}
