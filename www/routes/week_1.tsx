@@ -51,6 +51,7 @@ export default function Week1() {
     const items = (e.target as HTMLInputElement).value
     if (items.length > 0) {
       setSelectedRows(items)
+      setInfiniteMode(false)
     }
   }
 
