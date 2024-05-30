@@ -1,4 +1,13 @@
-import { createEffect, createMemo, createResource, createSignal, onMount, Show } from 'solid-js'
+import {
+  type Accessor,
+  createEffect,
+  createMemo,
+  createResource,
+  createSignal,
+  onMount,
+  type Setter,
+  Show,
+} from 'solid-js'
 import { basic } from '@flashcard/schedulers'
 import { fromOBJ } from '@flashcard/adapters'
 import infiniSched from '../scheduler.ts'
@@ -6,24 +15,25 @@ import SignaturePad from 'npm:signature_pad'
 
 import Furigana from '../components/furigana.tsx'
 import Page from '../components/page.tsx'
+import PracticeTypeSelector, { PracticeType } from '../components/practice_type_selector.tsx'
 import Readme from '../components/readme.tsx'
 
 const audioRoot = 'https://static.bpev.me/pages/japanese/audio/'
 const rows = ['あか', 'さた', 'なは', 'まや', 'らわ', 'がざ', 'だば', 'ぱ']
 
 export default function Week1() {
+  let audioRef
+  let selectRef
+  let canvasRef
   let deck // deck singleton preserves class props
   const [currCard, setCurrCard] = createSignal(null)
   const [showAnswer, setShowAnswer] = createSignal(false)
   const [isInfiniteMode, setInfiniteMode] = createSignal(false)
   const [practiceInput, setPracticeInput] = createSignal('')
-  const [practiceType, setPracticeType] = createSignal('write')
+  const [practiceType, setPracticeType] = createSignal<PracticeType>(PracticeType.Writing)
   const [pad, setPad] = createSignal()
-  const [showKanji, setShowKanji] = createSignal(false)
+  const [showKanji, setShowKanji] = createSignal(true)
   const [selectedRows, setSelectedRows] = createSignal(['Set 1: あか'])
-  let audioRef
-  let selectRef
-  let canvas
 
   const isVertical = () => globalThis.innerHeight > globalThis.innerWidth
 
@@ -56,8 +66,8 @@ export default function Week1() {
   }
 
   createEffect(() => {
-    if (canvas && practiceType() === 'write') {
-      setPad(new SignaturePad(canvas))
+    if (canvasRef && practiceType() === PracticeType.Writing) {
+      setPad(new SignaturePad(canvasRef))
     }
   })
 
@@ -69,7 +79,11 @@ export default function Week1() {
       else done(e)
     }
     // keycode === 'spacebar'
-    if ((event.keyCode === 32) && audioRef) audioRef.play()
+    if (
+      (event.keyCode === 32) &&
+      (practiceType() !== PracticeType.Speaking) &&
+      audioRef
+    ) audioRef.play()
   }
 
   onMount(() => {
@@ -86,11 +100,7 @@ export default function Week1() {
     const currData = { ...data() }
     currData.notes = currData.notes.filter(([cat]) => selectedRows().join().includes(cat))
     deck = fromOBJ(currData, { 'sortField': 'ひらがな' })
-    deck.addTemplate(
-      'Listening',
-      '',
-      '<h1>{{ひらがな}}</h1>',
-    )
+    deck.addTemplate('default', '', '<h1>{{ひらがな}}</h1>')
     deck.scheduler = basic
     setCurrCard(deck.getNext())
     return deck
@@ -101,11 +111,7 @@ export default function Week1() {
       const currData = { ...wordData() }
       currData.notes = currData.notes.filter(([cat]) => selectedRows().join().includes(cat))
       deck = fromOBJ(currData, { 'sortField': 'ひらがな' })
-      deck.addTemplate(
-        'Listening',
-        '',
-        '<h1>{{ひらがな}}</h1>',
-      )
+      deck.addTemplate('default', '', '<h1>{{ひらがな}}</h1>')
       deck.scheduler = infiniSched
       setCurrCard(deck.getNext())
       setInfiniteMode(true)
@@ -130,11 +136,11 @@ export default function Week1() {
           </p>
           <Show when={isInfiniteMode()}>
             <h3>Finished!</h3>
-            <p class='b'>
+            <p>
               Here are some words to practice! Don't worry about remembering the meanings or kanji of the words. We are
               just practicing sounds! Those are just there so that maybe you'll recognize them later.
             </p>
-            <p>(Note: this list will repeat indefinitely)</p>
+            <p class='b'>(Note: this list will repeat indefinitely)</p>
           </Show>
 
           <details class='mv4'>
@@ -149,39 +155,10 @@ export default function Week1() {
             </div>
 
             <div class='ma4'>
-              <span class='mr1'>Input type:</span>
-              <input
-                type='radio'
-                id='write'
-                name='input-type'
-                value='input-write'
-                class='mh1'
-                checked={practiceType() === 'write'}
-                onClick={[setPracticeType, 'write']}
+              <PracticeTypeSelector
+                practiceType={practiceType}
+                setPracticeType={setPracticeType}
               />
-              <label class='mr3' for='write'>writing</label>
-
-              <input
-                type='radio'
-                id='type'
-                name='input-type'
-                value='input-type'
-                class='mh1'
-                checked={practiceType() === 'type'}
-                onClick={[setPracticeType, 'type']}
-              />
-              <label class='mr3' for='type'>typing</label>
-
-              <input
-                type='radio'
-                id='none'
-                name='input-type'
-                value='input-none'
-                class='mh1'
-                checked={practiceType() === 'none'}
-                onClick={[setPracticeType, 'none']}
-              />
-              <label for='none'>none</label>
             </div>
             <div class='ma4'>
               <Show when={!isInfiniteMode()}>
@@ -209,10 +186,15 @@ export default function Week1() {
         </div>
 
         <Show when={currCard()}>
-          <div class='pa3'>
+          <div
+            class='pa3'
+            style={`visibility: ${
+              ((practiceType() === PracticeType.Speaking) && !showAnswer()) ? 'hidden' : 'visible'
+            }`}
+          >
             <audio
               ref={(ref) => audioRef = ref}
-              autoplay
+              autoplay={practiceType() !== PracticeType.Speaking}
               controls
               src={`${audioRoot}${currCard().note.content.ひらがな}.mp3`}
             />
@@ -228,16 +210,16 @@ export default function Week1() {
             flex-wrap: wrap;
           `}
         >
-          <Show when={practiceType() === 'write'}>
+          <Show when={practiceType() === PracticeType.Writing}>
             <canvas
-              ref={canvas}
+              ref={canvasRef}
               width='256'
               height='256'
               class='ba ma1'
               style='width: 254px; height: 254px;'
             />
           </Show>
-          <Show when={practiceType() === 'type'}>
+          <Show when={practiceType() === PracticeType.Typing}>
             <div
               class='ma1 relative'
               style='width: 256px; height: 256px;'
@@ -257,7 +239,15 @@ export default function Week1() {
               class='ba ma1 relative flex flex-column justify-center'
               style={`width: 256px; height: 256px; min-width: 256px; min-height: 256px;`}
             >
-              <div style={`visibility: ${showAnswer() ? 'visible' : 'hidden'}`}>
+              <div
+                style={`visibility: ${
+                  (
+                      (practiceType() === PracticeType.Speaking) || showAnswer()
+                    )
+                    ? 'visible'
+                    : 'hidden'
+                }`}
+              >
                 <p
                   class={`ma0 ${(isInfiniteMode() && !showKanji() && currCard().note.content.漢字) ? 'f4' : 'f2'}`}
                 >
@@ -274,7 +264,7 @@ export default function Week1() {
                 style='position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);'
                 onClick={[setShowAnswer, true]}
               >
-                show
+                {(practiceType() === PracticeType.Speaking) ? 'play audio' : 'show answer'}
               </button>
             </div>
           </Show>
