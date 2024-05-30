@@ -22,11 +22,11 @@ One of the first things you will hear about Japanese is the 3 different systems 
 
 # What about Katakana, Kanji, and Romaji?
 
-**Katakana** - Katakana represents that a word is a borrowed foreign word. So for an English speaker, it's tempting to jump into Katakana first, because you can often understand words that you sound out. I don't have anything particularly against doing that. However, since the sounds are entirely the same, I think it gets confusing to learn ひらがな and katakana at the same time. For this reason, we will intentionally try to avoid katakana until we are comfortable with ひらがな.
+**Katakana** - Katakana is generally used for representing borrowed foreign words. For an English speaker, it's tempting to jump into katakana first, because you can often understand words when you sound them out. I don't have anything particularly against learning katakana early. However, since the sound sets are entirely the same, I think it gets confusing to learn ひらがな and katakana at the same time. For this reason, we will intentionally try to avoid katakana until we are comfortable with ひらがな.
 
 **Kanji** - We will slowly be learning kanji as we expand our vocabulary. We won't be ignoring kanji. We just won't be focusing on it.
 
-**Romaji** - In this course, we will little to no romaji to prevent it from becoming a crutch. For pronunciation, we should primarly rely on ひらがな. Even for learning ひらがな, we will try to lean on audio as much as we can, instead of Romaji.
+**Romaji** - We will little to no romaji, in order to prevent it from becoming a crutch. For pronunciation, we should primarly rely on ひらがな. Even for learning ひらがな, we will try to lean on audio as much as we can, instead of Romaji.
 
 # Why Practice Writing?
 

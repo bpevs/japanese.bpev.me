@@ -4,6 +4,7 @@ import { fromOBJ } from '@flashcard/adapters'
 import infiniSched from '../scheduler.ts'
 import SignaturePad from 'npm:signature_pad'
 
+import Furigana from '../components/furigana.tsx'
 import Page from '../components/page.tsx'
 import Readme from '../components/readme.tsx'
 
@@ -18,6 +19,7 @@ export default function Week1() {
   const [practiceInput, setPracticeInput] = createSignal('')
   const [practiceType, setPracticeType] = createSignal('write')
   const [pad, setPad] = createSignal()
+  const [showKanji, setShowKanji] = createSignal(false)
   const [selectedRows, setSelectedRows] = createSignal(['Set 1: あか'])
   let audioRef
   let selectRef
@@ -131,41 +133,69 @@ export default function Week1() {
             </p>
             <p>(Note: this list will repeat indefinitely)</p>
           </Show>
-          <div class='ma4 tc'>
-            <p class='ma1'>Input type to practice:</p>
-            <input
-              type='radio'
-              id='write'
-              name='input-type'
-              value='input-write'
-              class='mh1'
-              checked={practiceType() === 'write'}
-              onClick={[setPracticeType, 'write']}
-            />
-            <label class='mr3' for='write'>writing</label>
 
-            <input
-              type='radio'
-              id='type'
-              name='input-type'
-              value='input-type'
-              class='mh1'
-              checked={practiceType() === 'type'}
-              onClick={[setPracticeType, 'type']}
-            />
-            <label class='mr3' for='type'>typing</label>
+          <details class='mv4'>
+            <summary>Settings</summary>
+            <div class='ma4'>
+              <label for='show-kanji' class='mr2'>Show Kanji:</label>
+              <input
+                type='checkbox'
+                name='show-kanji'
+                onClick={[setShowKanji, !showKanji()]}
+              />
+            </div>
 
-            <input
-              type='radio'
-              id='none'
-              name='input-type'
-              value='input-none'
-              class='mh1'
-              checked={practiceType() === 'none'}
-              onClick={[setPracticeType, 'none']}
-            />
-            <label for='none'>none</label>
-          </div>
+            <div class='ma4'>
+              <span class='mr1'>Input type:</span>
+              <input
+                type='radio'
+                id='write'
+                name='input-type'
+                value='input-write'
+                class='mh1'
+                checked={practiceType() === 'write'}
+                onClick={[setPracticeType, 'write']}
+              />
+              <label class='mr3' for='write'>writing</label>
+
+              <input
+                type='radio'
+                id='type'
+                name='input-type'
+                value='input-type'
+                class='mh1'
+                checked={practiceType() === 'type'}
+                onClick={[setPracticeType, 'type']}
+              />
+              <label class='mr3' for='type'>typing</label>
+
+              <input
+                type='radio'
+                id='none'
+                name='input-type'
+                value='input-none'
+                class='mh1'
+                checked={practiceType() === 'none'}
+                onClick={[setPracticeType, 'none']}
+              />
+              <label for='none'>none</label>
+            </div>
+            <div class='ma4'>
+              <Show when={!isInfiniteMode()}>
+                <button
+                  onClick={() => {
+                    setShowAnswer(false)
+                    setCurrCard()
+                    setPracticeInput('')
+                    if (pad()) pad().clear()
+                  }}
+                >
+                  skip to words
+                </button>
+              </Show>
+            </div>
+          </details>
+
           <ui-multiselect
             style='width: 100%;'
             ref={(ref) => selectRef = ref}
@@ -224,20 +254,18 @@ export default function Week1() {
               class='ba ma1 relative flex flex-column justify-center'
               style={`width: 256px; height: 256px; min-width: 256px; min-height: 256px;`}
             >
-              <Show when={showAnswer()}>
+              <div style={`visibility: ${showAnswer() ? 'visible' : 'hidden'}`}>
                 <p
-                  class={`ma0 ${isInfiniteMode() ? 'f4' : 'f2'}`}
-                  innerHTML={currCard().render().answer}
-                />
+                  class={`ma0 ${(isInfiniteMode() && !showKanji() && currCard().note.content.漢字) ? 'f4' : 'f2'}`}
+                >
+                  {(showKanji() && currCard().note.content.漢字)
+                    ? <Furigana>{() => currCard().note.content.漢字}</Furigana>
+                    : currCard().note.content.ひらがな}
+                </p>
                 <Show when={wordData() && currCard() && isInfiniteMode()}>
-                  <p class='ma0'>
-                    {currCard().note.content.英語}
-                    <Show when={currCard().note.content.漢字}>
-                      {` - ${currCard().note.content.漢字}`}
-                    </Show>
-                  </p>
+                  <p class='ma0'>{currCard().note.content.英語}</p>
                 </Show>
-              </Show>
+              </div>
               <button
                 class='f5'
                 style='position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);'
