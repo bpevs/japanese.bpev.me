@@ -49,7 +49,9 @@ export default function Week1() {
 
   function onSelect(e) {
     const items = (e.target as HTMLInputElement).value
-    setSelectedRows(items)
+    if (items.length > 0) {
+      setSelectedRows(items)
+    }
   }
 
   createEffect(() => {
