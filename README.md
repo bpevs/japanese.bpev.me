@@ -2,7 +2,7 @@
 
 As of creating this project, I don't speak Japanese. This is a collection of notes and tools that I will build as I learn Japanese.
 
-## Methodology
+## How this Website Works
 
 I will be splitting up all this learning into "weeks". Not because it took me a week, but because I think that it's a chunk of information that could be studied for a week to learn at a reasonable pace. Each week will focus on a few new concepts, and build upon each of the previous. They will be split into a folder with a README explaining the concept/goals of the week. Optionally, you may also find such activities as:
 

@@ -1,126 +1,100 @@
-import {
-  type Accessor,
-  createEffect,
-  createMemo,
-  createResource,
-  createSignal,
-  onMount,
-  type Setter,
-  Show,
-} from 'solid-js'
-import { basic } from '@flashcard/schedulers'
-import { fromOBJ } from '@flashcard/adapters'
-import infiniSched from '../scheduler.ts'
+import { createEffect, createMemo, createSignal, onMount, Show } from 'solid-js'
+import { createStore } from 'solid-js/store'
 import SignaturePad from 'npm:signature_pad'
 
+import FlashcardButtons from '../components/flashcard_buttons.tsx'
 import Furigana from '../components/furigana.tsx'
 import Page from '../components/page.tsx'
 import PracticeTypeSelector, { PracticeType } from '../components/practice_type_selector.tsx'
-import Readme from '../components/readme.tsx'
+import { audioRoot } from '../constants.ts'
+import useFlashcards from '../hooks/use_flashcards.ts'
+import infiniSched from '../scheduler.ts'
 
-const audioRoot = 'https://static.bpev.me/pages/japanese/audio/'
+const { Listening, Speaking, Typing, Writing } = PracticeType
 const rows = ['あか', 'さた', 'なは', 'まや', 'らわ', 'がざ', 'だば', 'ぱ']
 
 export default function Week1() {
-  let audioRef
-  let selectRef
-  let canvasRef
-  let deck // deck singleton preserves class props
-  const [currCard, setCurrCard] = createSignal(null)
+  let audioRef, selectRef, canvasRef
+  const [settings, setSettings] = createStore({
+    practiceType: Writing,
+    selectedRows: ['Set 1: あか'],
+    showKanji: true,
+  })
+
+  const isSpeaking = () => settings.practiceType === Speaking
   const [showAnswer, setShowAnswer] = createSignal(false)
-  const [isInfiniteMode, setInfiniteMode] = createSignal(false)
   const [practiceInput, setPracticeInput] = createSignal('')
-  const [practiceType, setPracticeType] = createSignal<PracticeType>(PracticeType.Writing)
   const [pad, setPad] = createSignal()
-  const [showKanji, setShowKanji] = createSignal(true)
-  const [selectedRows, setSelectedRows] = createSignal(['Set 1: あか'])
 
-  const isVertical = () => globalThis.innerHeight > globalThis.innerWidth
-
-  const [data] = createResource(async () => {
-    const baseURL = `${window.location.origin}/week-1/`
-    const resp = await fetch(baseURL + 'ひらがな.json')
-    return await resp.json()
-  })
-  const [wordData] = createResource(async () => {
-    const baseURL = `${window.location.origin}/week-1/`
-    const resp = await fetch(baseURL + 'words.json')
-    return await resp.json()
+  const charData = useFlashcards({
+    filter: ([cat]) => settings.selectedRows.join().includes(cat),
+    sortField: 'ひらがな',
+    url: `${window.location.origin}/week-1/ひらがな.json`,
   })
 
-  const done = (e) => {
-    e.stopPropagation()
-    deck.answerCurrent(1)
-    setShowAnswer(false)
-    setCurrCard(deck.getNext())
-    setPracticeInput('')
-    if (pad()) pad().clear()
+  const wordData = useFlashcards({
+    filter: ([cat]) => settings.selectedRows.join().includes(cat),
+    scheduler: infiniSched,
+    sortField: 'ひらがな',
+    url: `${window.location.origin}/week-1/words.json`,
+  })
+
+  const currCard = () => charData.currCard() || wordData.currCard()
+  const hasCompletedChars = () => charData.loaded() && !charData.currCard()
+  const deck = () => {
+    if (!charData.loaded() || !charData.deck()) return null
+    if (hasCompletedChars() && wordData.loaded()) return wordData.deck()
+    return charData.deck()
+  }
+  const setCurrCard = (card) => {
+    if (!hasCompletedChars()) charData.setCurrCard(card)
+    else wordData.setCurrCard(card)
   }
 
-  function onSelect(e) {
-    const items = (e.target as HTMLInputElement).value
-    if (items.length > 0) {
-      setSelectedRows(items)
-      setInfiniteMode(false)
-    }
-  }
-
+  createEffect(() => showAnswer() ? audioRef.play() : undefined)
   createEffect(() => {
-    if (canvasRef && practiceType() === PracticeType.Writing) {
+    if (canvasRef && settings.practiceType === Writing) {
       setPad(new SignaturePad(canvasRef))
     }
   })
 
-  const keyEvent = (e) => {
-    // keycode === 'enter'
-    if (event.keyCode === 13) {
-      if (selectRef.open) selectRef.open = false
-      else if (!showAnswer()) setShowAnswer(true)
-      else done(e)
-    }
-    // keycode === 'spacebar'
-    if (
-      (event.keyCode === 32) &&
-      (practiceType() !== PracticeType.Speaking) &&
-      audioRef
-    ) audioRef.play()
+  function onSuccess(e) {
+    e.stopPropagation()
+    deck().answerCurrent(1)
+    setShowAnswer(false)
+    setCurrCard(deck().getNext())
+    setPracticeInput('')
+    if (pad()) pad().clear()
   }
 
   onMount(() => {
-    if (selectRef) selectRef.addEventListener('change', onSelect)
-    addEventListener('keydown', keyEvent)
+    function onKeyEvent(e) {
+      if (event.keyCode === 13) { // keycode === 'enter'
+        if (selectRef.open) selectRef.open = false
+        else if (!settings.showAnswer) setShowAnswer(true)
+        else onSuccess(e)
+      }
+      if (
+        (event.keyCode === 32) && // keycode === 'spacebar'
+        (settings.practiceType !== Speaking) &&
+        audioRef
+      ) audioRef.play()
+    }
+
+    function onSelectRows(e) {
+      const selectedRows = (e.target as HTMLInputElement).value
+      if (selectedRows.length) {
+        setSettings({ ...settings, selectedRows })
+        setPracticeInput('')
+        if (pad()) pad().clear()
+      }
+    }
+
+    if (selectRef) selectRef.addEventListener('change', onSelectRows)
+    addEventListener('keydown', onKeyEvent)
     return () => {
-      removeEventListener('keydown', keyEvent)
-      if (selectRef) selectRef.removeEventListener('change', onSelect)
-    }
-  })
-
-  createEffect(() => {
-    if (data.loading) return null
-    const currData = { ...data() }
-    currData.notes = currData.notes.filter(([cat]) => selectedRows().join().includes(cat))
-    deck = fromOBJ(currData, { 'sortField': 'ひらがな' })
-    deck.addTemplate('default', '', '<h1>{{ひらがな}}</h1>')
-    deck.scheduler = basic
-    setCurrCard(deck.getNext())
-    return deck
-  })
-
-  createEffect(() => {
-    if (!data.loading && !currCard()) {
-      const currData = { ...wordData() }
-      currData.notes = currData.notes.filter(([cat]) => selectedRows().join().includes(cat))
-      deck = fromOBJ(currData, { 'sortField': 'ひらがな' })
-      deck.addTemplate('default', '', '<h1>{{ひらがな}}</h1>')
-      deck.scheduler = infiniSched
-      setCurrCard(deck.getNext())
-      setInfiniteMode(true)
-    }
-  })
-
-  createEffect(() => {
-    if (showAnswer() === true) {
-      audioRef.play()
+      removeEventListener('keydown', onKeyEvent)
+      if (selectRef) selectRef.removeEventListener('change', onSelectRows)
     }
   })
 
@@ -134,7 +108,7 @@ export default function Week1() {
             It could be helpful to also add the previous day's sets as well. However, the practice words at the end of
             the new characters will also include all prior sets, so it's not strictly necessary!
           </p>
-          <Show when={isInfiniteMode()}>
+          <Show when={hasCompletedChars()}>
             <h3>Finished!</h3>
             <p>
               Here are some words to practice! Don't worry about remembering the meanings or kanji of the words. We are
@@ -150,18 +124,18 @@ export default function Week1() {
               <input
                 type='checkbox'
                 name='show-kanji'
-                onClick={[setShowKanji, !showKanji()]}
+                onClick={[setSettings, { showKanji: !settings.showKanji }]}
               />
             </div>
 
             <div class='ma4'>
               <PracticeTypeSelector
-                practiceType={practiceType}
-                setPracticeType={setPracticeType}
+                practiceType={() => settings.practiceType}
+                setPracticeType={(t) => setSettings('practiceType', t)}
               />
             </div>
             <div class='ma4'>
-              <Show when={!isInfiniteMode()}>
+              <Show when={!hasCompletedChars()}>
                 <button
                   onClick={() => {
                     setShowAnswer(false)
@@ -179,7 +153,7 @@ export default function Week1() {
           <ui-multiselect
             style='width: 100%;'
             ref={(ref) => selectRef = ref}
-            value={selectedRows()}
+            value={settings.selectedRows}
             options={rows.map((row, i) => `Set ${i + 1}: ${row}`)}
             onClick={(e) => e.stopPropagation()}
           />
@@ -189,28 +163,24 @@ export default function Week1() {
           <div
             class='pa3'
             style={`visibility: ${
-              ((practiceType() === PracticeType.Speaking) && !showAnswer()) ? 'hidden' : 'visible'
+              (
+                  (settings.practiceType === Speaking) &&
+                  !showAnswer()
+                )
+                ? 'hidden'
+                : 'visible'
             }`}
           >
             <audio
               ref={(ref) => audioRef = ref}
-              autoplay={practiceType() !== PracticeType.Speaking}
+              autoplay={settings.practiceType !== Speaking}
               controls
               src={`${audioRoot}${currCard().note.content.ひらがな}.mp3`}
             />
           </div>
         </Show>
-        <div
-          class='relative'
-          style={`
-            display: flex;
-            align-items: start;
-            justify-content: center;
-            margin: auto;
-            flex-wrap: wrap;
-          `}
-        >
-          <Show when={practiceType() === PracticeType.Writing}>
+        <div class='relative flex items-start justify-center flex-wrap center'>
+          <Show when={settings.practiceType === Writing}>
             <canvas
               ref={canvasRef}
               width='256'
@@ -219,7 +189,7 @@ export default function Week1() {
               style='width: 254px; height: 254px;'
             />
           </Show>
-          <Show when={practiceType() === PracticeType.Typing}>
+          <Show when={settings.practiceType === Typing}>
             <div
               class='ma1 relative'
               style='width: 256px; height: 256px;'
@@ -234,70 +204,54 @@ export default function Week1() {
               />
             </div>
           </Show>
-          <Show when={data() && currCard()}>
+          <Show when={deck() && currCard()}>
             <div
               class='ba ma1 relative flex flex-column justify-center'
               style={`width: 256px; height: 256px; min-width: 256px; min-height: 256px;`}
             >
-              <div
-                style={`visibility: ${
-                  (
-                      (practiceType() === PracticeType.Speaking) || showAnswer()
-                    )
-                    ? 'visible'
-                    : 'hidden'
-                }`}
-              >
+              <div style={`visibility: ${(isSpeaking() || showAnswer()) ? 'visible' : 'hidden'}`}>
                 <p
-                  class={`ma0 ${(isInfiniteMode() && !showKanji() && currCard().note.content.漢字) ? 'f4' : 'f2'}`}
+                  class={`ma0 ${
+                    (
+                        hasCompletedChars() &&
+                        !settings.showKanji &&
+                        currCard().note.content.漢字
+                      )
+                      ? 'f4'
+                      : 'f2'
+                  }`}
                 >
-                  {(showKanji() && currCard().note.content.漢字)
+                  {(settings.showKanji && currCard().note.content.漢字)
                     ? <Furigana>{() => currCard().note.content.漢字}</Furigana>
                     : currCard().note.content.ひらがな}
                 </p>
-                <Show when={wordData() && currCard() && isInfiniteMode()}>
+                <Show when={hasCompletedChars() && currCard()}>
                   <p class='ma0'>{currCard().note.content.英語}</p>
                 </Show>
               </div>
               <button
-                class='f5'
-                style='position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);'
+                class='absolute f5'
+                style='bottom: 10px; left: 50%; transform: translateX(-50%);'
                 onClick={[setShowAnswer, true]}
               >
-                {(practiceType() === PracticeType.Speaking) ? 'play audio' : 'show answer'}
+                {isSpeaking() ? 'play audio' : 'show answer'}
               </button>
             </div>
           </Show>
         </div>
 
         <Show when={currCard()}>
-          <div
-            class='mv3 shadow br3 w-50'
-            style='margin-left: auto; margin-right: auto;'
-          >
-            <div style={`visibility: ${showAnswer() ? 'visible' : 'hidden'}`}>
-              <button
-                class='ma3 pointer'
-                style='border:none; background-color: white; outline: none;'
-                onClick={done}
-              >
-                <h1>✅</h1>
-              </button>
-              <button
-                class='ma3 pointer'
-                style='border:none; background-color: white; outline: none;'
-                onClick={(e) => {
-                  e.stopPropagation()
-                  deck.answerCurrent(0)
-                  setShowAnswer(false)
-                  setCurrCard(deck.getNext())
-                  if (pad()) pad().clear()
-                }}
-              >
-                <h1>❌</h1>
-              </button>
-            </div>
-          </div>
+          <FlashcardButtons
+            isVisible={showAnswer}
+            onSuccess={onSuccess}
+            onFailure={(e) => {
+              e.stopPropagation()
+              deck.answerCurrent(0)
+              setShowAnswer(false)
+              setCurrCard(deck.getNext())
+              if (pad()) pad().clear()
+            }}
+          />
         </Show>
       </article>
     </Page>
