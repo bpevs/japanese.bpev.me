@@ -73,6 +73,14 @@ export default function Week1() {
     if (pad()) pad().clear()
   }
 
+  function onFailure(e) {
+    e.stopPropagation()
+    deck().answerCurrent(0)
+    setShowAnswer(false)
+    setCurrCard(deck.getNext())
+    if (pad()) pad().clear()
+  }
+
   onMount(() => {
     function onKeyEvent(e) {
       if (event.keyCode === 13) { // keycode === 'enter'
@@ -124,18 +132,6 @@ export default function Week1() {
               just practicing sounds! Those are just there so that maybe you'll recognize them later.
             </p>
             <p class='b'>(Note: this list will repeat indefinitely)</p>
-
-            <Show when={settings.selectedRows.join().includes('ぱ')}>
-              <h3>
-                Handakuten (<Furigana>{() => '半濁点'}</Furigana>, ◌゚)
-              </h3>
-              <p>
-                Note that, because of the history of the{' '}
-                <a href={handakutenURL}>handakuten (半濁点, ◌゚)</a>, the "p" sound is most commonly used in
-                foreign-borrowed katakana words. So a lot of these words, you won't see written in this way quite as
-                much.
-              </p>
-            </Show>
           </Show>
 
           <details class='mv4'>
@@ -272,13 +268,7 @@ export default function Week1() {
           <FlashcardButtons
             isVisible={showAnswer}
             onSuccess={onSuccess}
-            onFailure={(e) => {
-              e.stopPropagation()
-              deck.answerCurrent(0)
-              setShowAnswer(false)
-              setCurrCard(deck.getNext())
-              if (pad()) pad().clear()
-            }}
+            onFailure={onFailure}
           />
         </Show>
       </article>
