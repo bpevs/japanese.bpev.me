@@ -5,6 +5,8 @@ import { A, Route, Router } from 'solid-js/router'
 import { useLocation } from 'solid-js/router'
 import { Badge, Icon, IconButton, Loader, Multiselect } from '@inro/ui'
 
+import Readme from '$/components/readme.tsx'
+
 customElements.define('ui-badge', Badge)
 customElements.define('ui-icon', Icon)
 customElements.define('ui-icon-button', IconButton)
@@ -21,8 +23,7 @@ declare global {
   }
 }
 
-import Home from './routes/home.tsx'
-import Week1 from './routes/week_1.tsx'
+import Week1 from '$routes/week-1/site/main.tsx'
 
 function Link({ name, href }) {
   const location = useLocation()
@@ -55,7 +56,7 @@ function App() {
   return (
     <div>
       <Router root={Layout}>
-        <Route path='/' component={Home} />
+        <Route path='/' component={Readme} />
         <Route path='/week-1' component={Week1} />
       </Router>
     </div>

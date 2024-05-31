@@ -1,5 +1,7 @@
 {
   "imports": {
+    "$/": "./www/",
+    "$routes/": "./",
     "kuroshiro": "npm:kuroshiro",
     "kuroshiro-analyzer-kuromoji": "npm:kuroshiro-analyzer-kuromoji",
 

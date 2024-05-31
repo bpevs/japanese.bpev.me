@@ -4,10 +4,10 @@
     "singleQuote": true,
     "semiColons": false,
     "lineWidth": 120,
-    "exclude": ["dist", "audio", "static"]
+    "exclude": ["dist", "audio", "www/static"]
   },
   "lint": {
-    "exclude": ["dist", "audio", "static"]
+    "exclude": ["dist", "audio", "www/static"]
   },
   "compilerOptions": {
     "lib": [

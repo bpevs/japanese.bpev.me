@@ -2,24 +2,30 @@ import { createEffect, createMemo, createSignal, onMount, Show } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import SignaturePad from 'npm:signature_pad'
 
-import FlashcardButtons from '../components/flashcard_buttons.tsx'
-import Furigana from '../components/furigana.tsx'
-import Page from '../components/page.tsx'
-import PracticeTypeSelector, { PracticeType } from '../components/practice_type_selector.tsx'
-import { audioRoot } from '../constants.ts'
-import useFlashcards from '../hooks/use_flashcards.ts'
-import infiniSched from '../scheduler.ts'
+import FlashcardButtons from '$/components/flashcard_buttons.tsx'
+import Furigana from '$/components/furigana.tsx'
+import Page from '$/components/page.tsx'
+import PracticeTypeSelector, { PracticeType } from '$/components/select_practice_type.tsx'
+import DisplayTypeSelector, { DisplayType } from '$/components/select_display_type.tsx'
+import { audioRoot } from '$/constants.ts'
+import useFlashcards from '$/hooks/use_flashcards.ts'
+import infiniSched from '$/scheduler.ts'
 
 const { Listening, Speaking, Typing, Writing } = PracticeType
+
 const rows = ['あか', 'さた', 'なは', 'まや', 'らわ', 'がざ', 'だば', 'ぱ']
+const handakutenURL =
+  'https://en.wikipedia.org/wiki/Dakuten_and_handakuten#:~:text=The%20handakuten%20is%20an%20innovation,p%2F%20in%20their%20own%20writing.'
 
 export default function Week1() {
   let audioRef, selectRef, canvasRef
   const [settings, setSettings] = createStore({
     practiceType: Writing,
+    displayType: DisplayType.Furigana,
     selectedRows: ['Set 1: あか'],
-    showKanji: true,
   })
+  const showKanji =
+    () => ((settings.displayType === DisplayType.Furigana) || (settings.displayType === DisplayType.Kanji))
 
   const isSpeaking = () => settings.practiceType === Speaking
   const [showAnswer, setShowAnswer] = createSignal(false)
@@ -103,11 +109,14 @@ export default function Week1() {
       <article class='pa3 pa5-ns tc' onClick={() => selectRef.open = false}>
         <div class='tl measure pb4' style='margin: auto;'>
           <h3>Instructions</h3>
-          <p>Select 1-2 new sets of ひらがな to learn per day (one at a time!).</p>
+          <p>
+            Select 1-2 new sets of <Furigana>{() => '平仮名'}</Furigana> to learn per day (one at a time!).
+          </p>
           <p>
             It could be helpful to also add the previous day's sets as well. However, the practice words at the end of
             the new characters will also include all prior sets, so it's not strictly necessary!
           </p>
+
           <Show when={hasCompletedChars()}>
             <h3>Finished!</h3>
             <p>
@@ -115,16 +124,26 @@ export default function Week1() {
               just practicing sounds! Those are just there so that maybe you'll recognize them later.
             </p>
             <p class='b'>(Note: this list will repeat indefinitely)</p>
+
+            <Show when={settings.selectedRows.join().includes('ぱ')}>
+              <h3>
+                Handakuten (<Furigana>{() => '半濁点'}</Furigana>, ◌゚)
+              </h3>
+              <p>
+                Note that, because of the history of the{' '}
+                <a href={handakutenURL}>handakuten (半濁点, ◌゚)</a>, the "p" sound is most commonly used in
+                foreign-borrowed katakana words. So a lot of these words, you won't see written in this way quite as
+                much.
+              </p>
+            </Show>
           </Show>
 
           <details class='mv4'>
             <summary>Settings</summary>
             <div class='ma4'>
-              <label for='show-kanji' class='mr2'>Show Kanji:</label>
-              <input
-                type='checkbox'
-                name='show-kanji'
-                onClick={[setSettings, { showKanji: !settings.showKanji }]}
+              <DisplayTypeSelector
+                displayType={() => settings.displayType}
+                setDisplayType={(t) => setSettings('displayType', t)}
               />
             </div>
 
@@ -210,21 +229,30 @@ export default function Week1() {
               style={`width: 256px; height: 256px; min-width: 256px; min-height: 256px;`}
             >
               <div style={`visibility: ${(isSpeaking() || showAnswer()) ? 'visible' : 'hidden'}`}>
-                <p
-                  class={`ma0 ${
-                    (
-                        hasCompletedChars() &&
-                        !settings.showKanji &&
-                        currCard().note.content.漢字
-                      )
-                      ? 'f4'
-                      : 'f2'
-                  }`}
+                <Show when={showKanji() && hasCompletedChars() && currCard().note.content.漢字}>
+                  <p class='ma0 f2'>
+                    <Furigana showInitial={false}>{() => currCard().note.content.漢字}</Furigana>
+                  </p>
+                </Show>
+                <Show
+                  when={(DisplayType.Hiragana === settings.displayType) ||
+                    ((DisplayType.Furigana === settings.displayType) && !currCard().note.content.漢字) ||
+                    ((DisplayType.Strokes === settings.displayType) && hasCompletedChars())}
                 >
-                  {(settings.showKanji && currCard().note.content.漢字)
-                    ? <Furigana>{() => currCard().note.content.漢字}</Furigana>
-                    : currCard().note.content.ひらがな}
-                </p>
+                  <p class={`ma0 ${(currCard().note.content.ひらがな.length) > 2 ? 'f4' : 'f2'}`}>
+                    {currCard().note.content.ひらがな}
+                  </p>
+                </Show>
+                <Show
+                  when={(settings.displayType === DisplayType.Strokes) &&
+                    !hasCompletedChars() &&
+                    showAnswer()}
+                >
+                  <img
+                    style='height: 90%; width: auto;'
+                    src={`/www/static/strokes/hiragana/${currCard().note.content.ひらがな}.svg`}
+                  />
+                </Show>
                 <Show when={hasCompletedChars() && currCard()}>
                   <p class='ma0'>{currCard().note.content.英語}</p>
                 </Show>
