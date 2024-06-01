@@ -2,6 +2,7 @@
   "imports": {
     "$/": "./www/",
     "$routes/": "./",
+    "howler": "npm:howler",
     "kuroshiro": "npm:kuroshiro",
     "kuroshiro-analyzer-kuromoji": "npm:kuroshiro-analyzer-kuromoji",
 
@@ -11,6 +12,7 @@
     "solid-js/router": "npm:@solidjs/router",
 
     "@flashcard/adapters": "jsr:@flashcard/adapters@0.0.3",
+    "@flashcard/core": "jsr:@flashcard/core@0.0.3",
     "@flashcard/schedulers": "jsr:@flashcard/schedulers@0.0.3",
     "@inro/ui": "jsr:@inro/ui@0.0.1-alpha-1"
   }

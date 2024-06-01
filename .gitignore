@@ -1,6 +1,3 @@
 .DS_Store
-dist
-www/node_modules
 node_modules
-.env
-audio
+www/static/index.js

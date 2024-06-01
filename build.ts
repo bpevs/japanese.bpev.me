@@ -18,7 +18,7 @@ const options = {
   entryPoints: [
     { in: './www/index.tsx', out: './index' },
   ],
-  outdir: './dist',
+  outdir: './www/static',
   bundle: true,
   platform: 'browser',
   format: 'esm' as Format,
