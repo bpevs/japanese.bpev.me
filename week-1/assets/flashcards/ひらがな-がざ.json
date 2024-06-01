@@ -1,0 +1,49 @@
+{
+  "id": "ひらがな-がざ",
+  "name": "Learn ひらがな - がざ",
+  "desc": "Learn ひらがな - がざ",
+  "meta": {
+    "audio": "ひらがな-がざ.mp3"
+  },
+  "fields": ["kana", "romaji", "english", "kanji", "furigana"],
+  "notes": [
+    ["が", "ga", "", "", ""],
+    ["ぎ", "gi", "", "", ""],
+    ["ぐ", "gu", "", "", ""],
+    ["げ", "ge", "", "", ""],
+    ["ご", "go", "", "", ""],
+
+    ["ざ", "za", "", "", ""],
+    ["じ", "ji", "", "", ""],
+    ["ず", "zu", "", "", ""],
+    ["ぜ", "ze", "", "", ""],
+    ["ぞ", "zo", "", "", ""],
+
+    ["がく", "gaku", "learning", "学", ""],
+    ["がいこく", "gaikoku", "foreign country", "外国", ""],
+    ["かぜ", "kaze", "wind", "風", ""],
+    ["かがみ", "kagami", "mirror", "鏡", ""],
+    ["すず", "suzu", "bell", "鈴", ""],
+    ["つづく", "tsuduku", "to continue", "続く", ""],
+    ["げんき", "genki", "healthy", "元気", ""],
+    ["ぎんこう", "genkou", "bank", "銀行", ""],
+    ["ぜんぶ", "zenbu", "all", "全部", ""],
+    ["ごご", "gogo", "afternoon", "午後", ""],
+    ["ごはん", "goken", "rice/meal", "ご飯", ""],
+    ["いぜん", "izen", "before", "以前", ""],
+    ["あいさつ", "aisatsu", "greeting", "挨拶", ""],
+    ["みず", "mizu", "water", "水", ""],
+    ["かいが", "kaiga", "painting", "絵画", ""],
+    ["じかん", "jikan", "time", "時間", ""],
+    ["ぞう", "zou", "elephant", "象", ""],
+    ["ぞく", "zoku", "tribe", "族", ""],
+    ["げき", "geki", "drama/play", "劇", ""],
+    ["ぎもん", "gimon", "question", "疑問", ""],
+    ["げんご", "gengo", "language", "言語", ""],
+    ["じんじゃ", "jinja", "shrine", "神社", ""],
+    ["ごうかく", "goukaku", "pass (an exam)", "合格", ""],
+    ["げんきん", "genkin", "cash", "現金", ""],
+    ["ざせき", "zaseki", "seat", "座席", ""],
+    ["まじめ", "majime", "really", "", ""]
+  ]
+}

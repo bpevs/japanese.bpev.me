@@ -1,0 +1,45 @@
+{
+  "id": "ひらがな-だば",
+  "name": "Learn ひらがな - だば",
+  "desc": "Learn ひらがな - だば",
+  "meta": {
+    "audio": "ひらがな-だば.mp3"
+  },
+  "fields": ["kana", "romaji", "english", "kanji", "furigana"],
+  "notes": [
+    ["だ", "da", "", "", ""],
+    ["ぢ", "ji", "", "", ""],
+    ["づ", "zu", "", "", ""],
+    ["で", "de", "", "", ""],
+    ["ど", "do", "", "", ""],
+
+    ["ば", "ba", "", "", ""],
+    ["び", "bi", "", "", ""],
+    ["ぶ", "bu", "", "", ""],
+    ["べ", "be", "", "", ""],
+    ["ぼ", "bo", "", "", ""],
+
+    ["だいがく", "daigaku", "university", "大学", ""],
+    ["でんわ", "denwa", "telephone", "電話", ""],
+    ["どうぶつ", "doubutsu", "animal", "動物", ""],
+    ["たべもの", "tabemono", "food", "食べ物", ""],
+    ["おばあさん", "obaasan", "grandmother", "お婆さん", ""],
+    ["ぶた", "buta", "pig", "豚", ""],
+    ["でぐち", "degusa", "exit", "出口", ""],
+    ["どようび", "doyoubi", "Saturday", "土曜日", ""],
+    ["ぶんがく", "bungaku", "literature", "文学", ""],
+    ["おべんとう", "obentou", "boxed lunch", "お弁当", ""],
+    ["だいすき", "daisuki", "love (very like)", "大好き", ""],
+    ["ぼうし", "boushi", "hat", "帽子", ""],
+    ["ばくはつ", "bakuhatsu", "explosion", "爆発", ""],
+    ["ばいばい", "baibai", "bye-bye", "", ""],
+    ["だいきらい", "baikirai", "hate", "大嫌い", ""],
+    ["ぶんか", "bunka", "culture", "文化", ""],
+    ["びん", "bin", "bottle", "瓶", ""],
+    ["ばけもの", "bakemono", "monster", "化け物", ""],
+    ["でんき", "denki", "electricity", "電気", ""],
+    ["どくしん", "dokushin", "single/unmarried", "独身", ""],
+    ["ぶんけい", "bunkei", "grammar pattern", "文型", ""],
+    ["だんせい", "dansei", "male", "男性", ""],
+  ]
+}

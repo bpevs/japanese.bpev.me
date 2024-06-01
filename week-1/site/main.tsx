@@ -13,9 +13,7 @@ import infiniSched from '$/scheduler.ts'
 
 const { Listening, Speaking, Typing, Writing } = PracticeType
 
-const rows = ['あか', 'さた', 'なは', 'まや', 'らわ', 'がざ', 'だば', 'ぱ']
-const handakutenURL =
-  'https://en.wikipedia.org/wiki/Dakuten_and_handakuten#:~:text=The%20handakuten%20is%20an%20innovation,p%2F%20in%20their%20own%20writing.'
+const rows = ['あか', 'さた', 'はな', 'まや', 'らわ', 'がざ', 'だば', 'ぱ']
 
 export default function Week1() {
   let audioRef, selectRef, canvasRef
@@ -35,14 +33,14 @@ export default function Week1() {
   const charData = useFlashcards({
     filter: ([cat]) => settings.selectedRows.join().includes(cat),
     sortField: 'ひらがな',
-    url: `${window.location.origin}/week-1/ひらがな.json`,
+    url: `${window.location.origin}/week-1/assets/flashcards/ひらがな.json`,
   })
 
   const wordData = useFlashcards({
     filter: ([cat]) => settings.selectedRows.join().includes(cat),
     scheduler: infiniSched,
     sortField: 'ひらがな',
-    url: `${window.location.origin}/week-1/words.json`,
+    url: `${window.location.origin}/week-1/assets.flashcards/words-${}.json`,
   })
 
   const currCard = () => charData.currCard() || wordData.currCard()
