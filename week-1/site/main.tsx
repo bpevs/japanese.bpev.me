@@ -1,81 +1,61 @@
-import { createEffect, createMemo, createSignal, onMount, Show } from 'solid-js'
+import { createEffect, createMemo, createResource, createSignal, onMount, Show } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import SignaturePad from 'npm:signature_pad'
 
 import FlashcardButtons from '$/components/flashcard_buttons.tsx'
-import Furigana from '$/components/furigana.tsx'
 import Page from '$/components/page.tsx'
 import PracticeTypeSelector, { PracticeType } from '$/components/select_practice_type.tsx'
 import DisplayTypeSelector, { DisplayType } from '$/components/select_display_type.tsx'
-import { audioRoot } from '$/constants.ts'
-import useFlashcards from '$/hooks/use_flashcards.ts'
 import infiniSched from '$/scheduler.ts'
+import useDecks from './use_decks.ts'
 
+const rows = ['あか', 'さた', 'なは', 'まや', 'らわ', 'がざ', 'だば', 'ぱ']
 const { Listening, Speaking, Typing, Writing } = PracticeType
-
-const rows = ['あか', 'さた', 'はな', 'まや', 'らわ', 'がざ', 'だば', 'ぱ']
+const { Furigana, Hiragana, Kanji, Strokes } = DisplayType
 
 export default function Week1() {
   let audioRef, selectRef, canvasRef
   const [settings, setSettings] = createStore({
     practiceType: Writing,
-    displayType: DisplayType.Furigana,
-    selectedRows: ['Set 1: あか'],
+    displayType: Furigana,
+    selectedRows: [rows[0]],
   })
-  const showKanji =
-    () => ((settings.displayType === DisplayType.Furigana) || (settings.displayType === DisplayType.Kanji))
 
+  const {
+    answerCurrent,
+    getNext,
+    playAudio,
+    skipToWords,
+    isComplete,
+    isLoaded,
+    kana,
+    english,
+    kanji,
+    romaji,
+  } = useDecks({ rows: () => settings.selectedRows })
+
+  const showKanji = () => [Furigana, Kanji].includes(settings.displayType)
   const isSpeaking = () => settings.practiceType === Speaking
+  const isWriting = () => settings.practiceType === Writing
+
   const [showAnswer, setShowAnswer] = createSignal(false)
   const [practiceInput, setPracticeInput] = createSignal('')
   const [pad, setPad] = createSignal()
 
-  const charData = useFlashcards({
-    filter: ([cat]) => settings.selectedRows.join().includes(cat),
-    sortField: 'ひらがな',
-    url: `${window.location.origin}/week-1/assets/flashcards/ひらがな.json`,
-  })
-
-  const wordData = useFlashcards({
-    filter: ([cat]) => settings.selectedRows.join().includes(cat),
-    scheduler: infiniSched,
-    sortField: 'ひらがな',
-    url: `${window.location.origin}/week-1/assets.flashcards/words-${}.json`,
-  })
-
-  const currCard = () => charData.currCard() || wordData.currCard()
-  const hasCompletedChars = () => charData.loaded() && !charData.currCard()
-  const deck = () => {
-    if (!charData.loaded() || !charData.deck()) return null
-    if (hasCompletedChars() && wordData.loaded()) return wordData.deck()
-    return charData.deck()
-  }
-  const setCurrCard = (card) => {
-    if (!hasCompletedChars()) charData.setCurrCard(card)
-    else wordData.setCurrCard(card)
-  }
-
-  createEffect(() => showAnswer() ? audioRef.play() : undefined)
   createEffect(() => {
-    if (canvasRef && settings.practiceType === Writing) {
-      setPad(new SignaturePad(canvasRef))
-    }
+    if (canvasRef && isWriting()) setPad(new SignaturePad(canvasRef))
   })
 
-  function onSuccess(e) {
-    e.stopPropagation()
-    deck().answerCurrent(1)
-    setShowAnswer(false)
-    setCurrCard(deck().getNext())
-    setPracticeInput('')
-    if (pad()) pad().clear()
-  }
+  // Play audio on load and on answer
+  createEffect(() => playAudio(kana()))
+  createEffect(() => showAnswer() ? playAudio(kana()) : undefined)
 
-  function onFailure(e) {
+  function answer(e, grade) {
     e.stopPropagation()
-    deck().answerCurrent(0)
+    answerCurrent(grade)
     setShowAnswer(false)
-    setCurrCard(deck.getNext())
+    getNext()
+    setPracticeInput('')
     if (pad()) pad().clear()
   }
 
@@ -84,13 +64,12 @@ export default function Week1() {
       if (event.keyCode === 13) { // keycode === 'enter'
         if (selectRef.open) selectRef.open = false
         else if (!settings.showAnswer) setShowAnswer(true)
-        else onSuccess(e)
+        else answer(e, 1)
       }
       if (
         (event.keyCode === 32) && // keycode === 'spacebar'
-        (settings.practiceType !== Speaking) &&
-        audioRef
-      ) audioRef.play()
+        (settings.practiceType !== Speaking)
+      ) playAudio(kana())
     }
 
     function onSelectRows(e) {
@@ -116,14 +95,14 @@ export default function Week1() {
         <div class='tl measure pb4' style='margin: auto;'>
           <h3>Instructions</h3>
           <p>
-            Select 1-2 new sets of <Furigana>{() => '平仮名'}</Furigana> to learn per day (one at a time!).
+            Select 1-2 new sets of ひらがな to learn per day (one at a time!).
           </p>
           <p>
             It could be helpful to also add the previous day's sets as well. However, the practice words at the end of
             the new characters will also include all prior sets, so it's not strictly necessary!
           </p>
 
-          <Show when={hasCompletedChars()}>
+          <Show when={isComplete()}>
             <h3>Finished!</h3>
             <p>
               Here are some words to practice! Don't worry about remembering the meanings or kanji of the words. We are
@@ -148,11 +127,11 @@ export default function Week1() {
               />
             </div>
             <div class='ma4'>
-              <Show when={!hasCompletedChars()}>
+              <Show when={!isComplete()}>
                 <button
                   onClick={() => {
                     setShowAnswer(false)
-                    setCurrCard()
+                    skipToWords()
                     setPracticeInput('')
                     if (pad()) pad().clear()
                   }}
@@ -167,12 +146,12 @@ export default function Week1() {
             style='width: 100%;'
             ref={(ref) => selectRef = ref}
             value={settings.selectedRows}
-            options={rows.map((row, i) => `Set ${i + 1}: ${row}`)}
+            options={rows.map((row, i) => row)}
             onClick={(e) => e.stopPropagation()}
           />
         </div>
 
-        <Show when={currCard()}>
+        <Show when={kana()}>
           <div
             class='pa3'
             style={`visibility: ${
@@ -184,12 +163,13 @@ export default function Week1() {
                 : 'visible'
             }`}
           >
-            <audio
-              ref={(ref) => audioRef = ref}
-              autoplay={settings.practiceType !== Speaking}
-              controls
-              src={`${audioRoot}${currCard().note.content.ひらがな}.mp3`}
-            />
+            <button
+              onClick={() => {
+                playAudio(kana())
+              }}
+            >
+              play audio
+            </button>
           </div>
         </Show>
         <div class='relative flex items-start justify-center flex-wrap center'>
@@ -217,38 +197,36 @@ export default function Week1() {
               />
             </div>
           </Show>
-          <Show when={deck() && currCard()}>
+          <Show when={kana()}>
             <div
               class='ba ma1 relative flex flex-column justify-center'
               style={`width: 256px; height: 256px; min-width: 256px; min-height: 256px;`}
             >
               <div style={`visibility: ${(isSpeaking() || showAnswer()) ? 'visible' : 'hidden'}`}>
-                <Show when={showKanji() && hasCompletedChars() && currCard().note.content.漢字}>
-                  <p class='ma0 f2'>
-                    <Furigana showInitial={false}>{() => currCard().note.content.漢字}</Furigana>
-                  </p>
+                <Show when={showKanji() && isComplete() && kanji()}>
+                  <p class='ma0 f2' innerHTML={kanji()} />
                 </Show>
                 <Show
-                  when={(DisplayType.Hiragana === settings.displayType) ||
-                    ((DisplayType.Furigana === settings.displayType) && !currCard().note.content.漢字) ||
-                    ((DisplayType.Strokes === settings.displayType) && hasCompletedChars())}
+                  when={(Hiragana === settings.displayType) ||
+                    ((Furigana === settings.displayType) && !kanji()) ||
+                    ((Strokes === settings.displayType) && isComplete())}
                 >
-                  <p class={`ma0 ${(currCard().note.content.ひらがな.length) > 2 ? 'f4' : 'f2'}`}>
-                    {currCard().note.content.ひらがな}
+                  <p class={`ma0 ${(kana().length) > 2 ? 'f4' : 'f2'}`}>
+                    {kana()}
                   </p>
                 </Show>
                 <Show
-                  when={(settings.displayType === DisplayType.Strokes) &&
-                    !hasCompletedChars() &&
+                  when={(settings.displayType === Strokes) &&
+                    !isComplete() &&
                     showAnswer()}
                 >
                   <img
                     style='height: 90%; width: auto;'
-                    src={`/www/static/strokes/hiragana/${currCard().note.content.ひらがな}.svg`}
+                    src={`/www/static/strokes/hiragana/${kana()}.svg`}
                   />
                 </Show>
-                <Show when={hasCompletedChars() && currCard()}>
-                  <p class='ma0'>{currCard().note.content.英語}</p>
+                <Show when={isComplete() && kana()}>
+                  <p class='ma0'>{english()}</p>
                 </Show>
               </div>
               <button
@@ -262,11 +240,11 @@ export default function Week1() {
           </Show>
         </div>
 
-        <Show when={currCard()}>
+        <Show when={kana()}>
           <FlashcardButtons
             isVisible={showAnswer}
-            onSuccess={onSuccess}
-            onFailure={onFailure}
+            onSuccess={(e) => answer(e, 1)}
+            onFailure={(e) => answer(e, 0)}
           />
         </Show>
       </article>

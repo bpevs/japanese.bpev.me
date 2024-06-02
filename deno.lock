@@ -27,6 +27,7 @@
       "npm:esbuild": "npm:esbuild@0.20.2",
       "npm:esbuild-plugin-solid": "npm:esbuild-plugin-solid@0.5.0_esbuild@0.20.2_solid-js@1.8.16__seroval@1.0.5_@babel+core@7.24.3",
       "npm:esbuild@0.20": "npm:esbuild@0.20.2",
+      "npm:json-stringify-pretty-compact": "npm:json-stringify-pretty-compact@4.0.0",
       "npm:json-stringify-pretty-compact@4.0.0": "npm:json-stringify-pretty-compact@4.0.0",
       "npm:jszip@3.10.1": "npm:jszip@3.10.1",
       "npm:kuroshiro": "npm:kuroshiro@1.2.0",
