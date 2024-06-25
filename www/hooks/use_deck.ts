@@ -17,9 +17,9 @@ export default function useFlashcards({
 
   const [data] = createResource(deckURL, async () => {
     const resp = await fetch(deckURL)
-    return await resp.json()
+    const data = await resp.json()
+    return data
   })
-
   createEffect(() => {
     if (data.loading) return null
     const currData = { ...data() }

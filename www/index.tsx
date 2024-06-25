@@ -24,6 +24,7 @@ declare global {
 }
 
 import Week1 from '$routes/week-1/site/main.tsx'
+import Week2 from '$routes/week-2/site/main.tsx'
 
 function Link({ name, href }) {
   const location = useLocation()
@@ -45,6 +46,7 @@ function Layout(props) {
         <nav class='f6 fw6 ttu tracked'>
           <Link href='/' name='Home' />
           <Link href='/week-1' name='Week 1' />
+          <Link href='/week-2' name='Week 2' />
         </nav>
       </header>
       {props.children}
@@ -58,6 +60,7 @@ function App() {
       <Router root={Layout}>
         <Route path='/' component={Readme} />
         <Route path='/week-1' component={Week1} />
+        <Route path='/week-2' component={Week2} />
       </Router>
     </div>
   )

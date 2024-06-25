@@ -12,7 +12,8 @@ for await (const entry of walk('.')) {
   const week = entry.path.match(/^(week-\d+)\/.*\.json$/)?.[1]
   if (!week) continue
 
-  const deck = JSON.parse(await Deno.readTextFile(entry.path))
+  const deckText = await Deno.readTextFile(entry.path)
+  const deck = JSON.parse(deckText)
 
   const furiganaPath = `./${week}/assets/furigana.json`
   const furigana = JSON.parse(await Deno.readTextFile(furiganaPath))
