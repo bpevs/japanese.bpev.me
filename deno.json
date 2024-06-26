@@ -25,5 +25,8 @@
     "build:furigana": "deno run --allow-read --allow-write build-furigana.ts",
     "dev": "deno run -A build.ts dev",
     "test": "deno fmt && deno lint && deno test -A"
+  },
+  "imports": {
+    "@std/csv": "jsr:@std/csv@^0.224.3"
   }
 }

@@ -3,7 +3,8 @@
   "name": "pokemon",
   "desc": "Pokemon",
   "meta": {
-    "audio": "extra_pokemon.mp3"
+    "audio": "extra_pokemon.mp3",
+    "primary": "kana"
   },
   "fields": ["image", "kana"],
   "notes": [

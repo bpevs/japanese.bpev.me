@@ -23,7 +23,8 @@ export default function Week2() {
     [README, EXTRA].includes(route) ? route : README,
   )
 
-  const deckURL = () => `${rootPath}/flashcards/extra_pokemon.json`
+  const [selected, setSelected] = createSignal('extra_pokemon')
+  const deckURL = () => `${rootPath}/flashcards/${selected()}.json`
   const [furigana] = createResource(
     async () => (await fetch(`${rootPath}/furigana.json`)).json(),
   )
@@ -39,7 +40,7 @@ export default function Week2() {
     setCurrCard,
     playAudio,
   } = useDeck({
-    audioURL: `${rootPath}/audio/extra_pokemon.mp3`,
+    audioURL: `${rootPath}/audio/${selected()}.mp3`,
     deckURL: deckURL(),
     scheduler: infiniSched,
   })
@@ -125,8 +126,8 @@ export default function Week2() {
       <Show when={tab() === EXTRA}>
         <article class='pa3 pa5-ns tc'>
           <div class='tl measure pb4' style='margin: auto;'>
-            <select>
-              <option>Pokémon</option>
+            <select value={selected()} onInput={(e) => setSelected(e.currentTarget.value)}>
+              <option selected='selected' value='extra_pokemon'>Pokémon</option>
             </select>
             <details class='mv4'>
               <summary>Settings</summary>

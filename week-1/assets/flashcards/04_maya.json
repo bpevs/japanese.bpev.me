@@ -3,7 +3,8 @@
   "name": "まや",
   "desc": "Learn ひらがな - まや",
   "meta": {
-    "audio": "ひらがな-まや.mp3"
+    "audio": "ひらがな-まや.mp3",
+    "primary": "kana"
   },
   "fields": ["kana", "romaji", "english", "kanji"],
   "notes": [

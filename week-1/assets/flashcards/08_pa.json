@@ -3,7 +3,8 @@
   "name": "ぱ",
   "desc": "Learn ひらがな - ぱ",
   "meta": {
-    "audio": "words-ぱ.mp3"
+    "audio": "words-ぱ.mp3",
+    "primary": "kana"
   },
   "fields": ["kana", "romaji", "english", "kanji"],
   "notes": [

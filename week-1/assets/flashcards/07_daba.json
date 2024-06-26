@@ -3,7 +3,8 @@
   "name": "だば",
   "desc": "Learn ひらがな - だば",
   "meta": {
-    "audio": "ひらがな-だば.mp3"
+    "audio": "ひらがな-だば.mp3",
+    "primary": "kana"
   },
   "fields": ["kana", "romaji", "english", "kanji"],
   "notes": [

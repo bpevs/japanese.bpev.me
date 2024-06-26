@@ -3,7 +3,8 @@
   "name": "らわ",
   "desc": "Learn ひらがな - らわ",
   "meta": {
-    "audio": "ひらがな-らわ.mp3"
+    "audio": "ひらがな-らわ.mp3",
+    "primary": "kana"
   },
   "fields": ["kana", "romaji", "english", "kanji"],
   "notes": [

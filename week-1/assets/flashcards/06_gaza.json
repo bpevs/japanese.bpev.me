@@ -3,7 +3,8 @@
   "name": "がざ",
   "desc": "Learn ひらがな - がざ",
   "meta": {
-    "audio": "ひらがな-がざ.mp3"
+    "audio": "ひらがな-がざ.mp3",
+    "primary": "kana"
   },
   "fields": ["kana", "romaji", "english", "kanji"],
   "notes": [

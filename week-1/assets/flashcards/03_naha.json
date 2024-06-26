@@ -3,7 +3,8 @@
   "name": "なは",
   "desc": "Learn ひらがな - なは",
   "meta": {
-    "audio": "ひらがな-なは.mp3"
+    "audio": "ひらがな-なは.mp3",
+    "primary": "kana"
   },
   "fields": ["kana", "romaji", "english", "kanji"],
   "notes": [

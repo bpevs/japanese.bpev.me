@@ -3,7 +3,8 @@
   "name": "さた",
   "desc": "Learn ひらがな - さた",
   "meta": {
-    "audio": "ひらがな-さた.mp3"
+    "audio": "ひらがな-さた.mp3",
+    "primary": "kana"
   },
   "fields": ["kana", "romaji", "english", "kanji"],
   "notes": [

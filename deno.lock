@@ -13,6 +13,7 @@
       "jsr:@std/assert@^0.216.0": "jsr:@std/assert@0.216.0",
       "jsr:@std/bytes@^0.216.0": "jsr:@std/bytes@0.216.0",
       "jsr:@std/crypto@0.216": "jsr:@std/crypto@0.216.0",
+      "jsr:@std/csv@^0.224.3": "jsr:@std/csv@0.224.3",
       "jsr:@std/dotenv": "jsr:@std/dotenv@0.217.0",
       "jsr:@std/encoding@0.213": "jsr:@std/encoding@0.213.1",
       "jsr:@std/encoding@^0.216.0": "jsr:@std/encoding@0.216.0",
@@ -87,6 +88,9 @@
           "jsr:@std/assert@^0.216.0",
           "jsr:@std/encoding@^0.216.0"
         ]
+      },
+      "@std/csv@0.224.3": {
+        "integrity": "cf9cb88954a029b9997a613f67771d39b4d1602c8ea1a289328c89b48460fae3"
       },
       "@std/dotenv@0.217.0": {
         "integrity": "e65cbbf669f482c320b2f94d0a2fc536f1fcd06afdcfa4fde358129a18d1d428"
@@ -865,5 +869,10 @@
       }
     }
   },
-  "remote": {}
+  "remote": {},
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/csv@^0.224.3"
+    ]
+  }
 }

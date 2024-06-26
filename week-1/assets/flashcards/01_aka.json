@@ -3,7 +3,8 @@
   "name": "あか",
   "desc": "Learn ひらがな - あか",
   "meta": {
-    "audio": "ひらがな-あか.mp3"
+    "audio": "ひらがな-あか.mp3",
+    "primary": "kana"
   },
   "fields": ["kana", "romaji", "english", "kanji"],
   "notes": [

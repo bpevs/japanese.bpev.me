@@ -33,7 +33,7 @@ export default function DisplayTypeSelector({ displayType, setDisplayType }: {
         checked={displayType() === DisplayType.Hiragana}
         onClick={[setDisplayType, DisplayType.Hiragana]}
       />
-      <label class='mr3' for={DisplayType.Hiragana}>Hiragana</label>
+      <label class='mr3' for={DisplayType.Hiragana}>Kana</label>
 
       <input
         type='radio'
