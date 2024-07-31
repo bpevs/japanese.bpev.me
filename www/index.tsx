@@ -1,7 +1,6 @@
 import 'npm:core-js/actual/array/to-sorted'
-import { lazy } from 'solid-js'
 import { render } from 'solid-js/web'
-import { A, Route, Router } from 'solid-js/router'
+import { Route, Router } from 'solid-js/router'
 import { useLocation } from 'solid-js/router'
 import { Badge, Icon, IconButton, Loader, Multiselect } from '@inro/ui'
 
@@ -23,8 +22,8 @@ declare global {
   }
 }
 
-import Week1 from '$routes/week-1/site/main.tsx'
-import Week2 from '$routes/week-2/site/main.tsx'
+import Hiragana from '$tools/hiragana/site/main.tsx'
+import KatakanaPokemon from '$tools/katakana/site/main.tsx'
 
 function Link({ name, href }) {
   const location = useLocation()
@@ -45,8 +44,8 @@ function Layout(props) {
       <header class='bg-black w-100 ph3 pv3 pv4-ns ph4-m ph5-l'>
         <nav class='f6 fw6 ttu tracked'>
           <Link href='/' name='Home' />
-          <Link href='/week-1' name='Week 1' />
-          <Link href='/week-2' name='Week 2' />
+          <Link href='/tools/hiragana' name='Hiragana' />
+          <Link href='/tools/katakana' name='Katakana' />
         </nav>
       </header>
       {props.children}
@@ -59,8 +58,8 @@ function App() {
     <div>
       <Router root={Layout}>
         <Route path='/' component={Readme} />
-        <Route path='/week-1' component={Week1} />
-        <Route path='/week-2' component={Week2} />
+        <Route path='/tools/hiragana' component={Hiragana} />
+        <Route path='/tools/katakana' component={KatakanaPokemon} />
       </Router>
     </div>
   )

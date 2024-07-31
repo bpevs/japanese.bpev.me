@@ -1,9 +1,9 @@
 import { createResource } from 'solid-js'
 import { render } from 'https://deno.land/x/gfm/mod.ts'
 
-export default function Readme({ week }: { week?: string }) {
+export default function Readme({ id }: { id?: string }) {
   const [readme] = createResource(async () => {
-    const baseUrl = week ? `${window.location.origin}/${week}/` : window.location.origin + '/'
+    const baseUrl = id ? `${window.location.origin}/tools/${id}/` : window.location.origin + '/'
     const resp = await fetch(`${baseUrl}README.md`)
     return render(await resp.text(), { baseUrl })
   })

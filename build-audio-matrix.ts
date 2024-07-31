@@ -1,5 +1,5 @@
 import { Column, stringify } from '@std/csv/stringify'
-import { walk } from 'jsr:@std/fs'
+import { walk } from '@std/fs'
 
 for await (const entry of walk('.')) {
   if (entry.isDirectory || entry.isSymlink) continue

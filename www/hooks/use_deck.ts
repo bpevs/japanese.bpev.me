@@ -1,14 +1,13 @@
 import { createEffect, createMemo, createResource, createSignal } from 'solid-js'
-import { basic } from '@flashcard/schedulers'
-import { fromOBJ } from '@flashcard/adapters'
+import { Deck } from '@bpev/flashcards'
+import basic from '@bpev/flashcards/schedulers/basic'
 import { Howl } from 'howler'
 import deckToSprites from '$/utils/deck_to_sprites.ts'
 
-export default function useFlashcards({
+export default function useDeck({
   audioURL,
   deckURL,
   filter = (i) => Boolean(i),
-  sortField,
   scheduler = basic,
 }) {
   let deck
@@ -22,12 +21,12 @@ export default function useFlashcards({
   })
   createEffect(() => {
     if (data.loading) return null
-    const currData = { ...data() }
-    currData.notes = currData.notes.filter(filter)
-    deck = fromOBJ(currData, { sortField })
-    deck.addTemplate('default', '', '')
-    deck.scheduler = scheduler
-    setCurrCard(deck.getNext())
+    deck = new Deck(scheduler)
+    data().notes.forEach((note) => {
+      const [image, kana] = note
+      if (filter(note)) deck.addCard(kana, { image, kana })
+    })
+    setCurrCard(deck.getNext(1)[0])
     setLoaded(true)
   })
 

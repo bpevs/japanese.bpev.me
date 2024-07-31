@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createResource, createSignal, onMount, Show } from 'solid-js'
+import { createEffect, createSignal, onMount, Show } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import SignaturePad from 'npm:signature_pad'
 
@@ -6,17 +6,16 @@ import FlashcardButtons from '$/components/flashcard_buttons.tsx'
 import Readme from '$/components/readme.tsx'
 import PracticeTypeSelector, { PracticeType } from '$/components/select_practice_type.tsx'
 import DisplayTypeSelector, { DisplayType } from '$/components/select_display_type.tsx'
-import infiniSched from '$/scheduler.ts'
 import useDecks from './use_decks.ts'
 
 const rows = ['あか', 'さた', 'なは', 'まや', 'らわ', 'がざ', 'だば', 'ぱ']
-const { Listening, Speaking, Typing, Writing } = PracticeType
+const { Speaking, Typing, Writing } = PracticeType
 const { Furigana, Hiragana, Kanji, Strokes } = DisplayType
 const README = '#readme'
 const EXERCISE = '#exercise'
 
-export default function Week1() {
-  let audioRef, selectRef, canvasRef
+export default function HiraganaFlashcards() {
+  let selectRef, canvasRef
   const [tab, setTab] = createSignal(
     [README, EXERCISE].includes(location.hash.toLowerCase()) ? location.hash.toLowerCase() : README,
   )
@@ -33,11 +32,9 @@ export default function Week1() {
     playAudio,
     skipToWords,
     isComplete,
-    isLoaded,
     kana,
     english,
     kanji,
-    romaji,
   } = useDecks({ rows: () => settings.selectedRows })
 
   const showKanji = () => [Furigana, Kanji].includes(settings.displayType)
@@ -54,7 +51,7 @@ export default function Week1() {
 
   // Play audio on load and on answer
   createEffect(() => {
-    if (tab() === EXERCISE) playAudio(kana())
+    if ((tab() === EXERCISE) && !isSpeaking()) playAudio(kana())
   })
   createEffect(() => showAnswer() ? playAudio(kana()) : undefined)
 
@@ -122,7 +119,7 @@ export default function Week1() {
         </div>
       </nav>
       <Show when={tab() === README}>
-        <Readme week='week-1' />
+        <Readme id='hiragana' />
       </Show>
       <Show when={tab() === EXERCISE}>
         <article class='pa3 pa5-ns tc' onClick={() => selectRef.open = false}>
@@ -180,7 +177,7 @@ export default function Week1() {
               style='width: 100%;'
               ref={(ref) => selectRef = ref}
               value={settings.selectedRows}
-              options={rows.map((row, i) => row)}
+              options={rows.map((row) => row)}
               onClick={(e) => e.stopPropagation()}
             />
           </div>

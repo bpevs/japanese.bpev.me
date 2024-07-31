@@ -1,11 +1,11 @@
 import { createEffect, createMemo, createResource, createSignal } from 'solid-js'
 import deckToSprites from '$/utils/deck_to_sprites.ts'
 import infiniSched from '$/scheduler.ts'
-import { basic } from '@flashcard/schedulers'
-import { fromOBJ } from '@flashcard/adapters'
+import basic from '@bpev/flashcards/schedulers/basic'
+import { Deck } from '@bpev/flashcards'
 import { Howl } from 'howler'
 
-const rootPath = `${window.location.origin}/week-1/assets`
+const rootPath = `${window.location.origin}/tools/hiragana/assets`
 const filenameMap = {
   'あか': '01_aka',
   'さた': '02_sata',
@@ -20,7 +20,8 @@ const filenameMap = {
 const cache = {}
 
 export default function useDecks({ rows }) {
-  let charDeck, wordDeck
+  const charDeck = new Deck(basic)
+  const wordDeck = new Deck(infiniSched)
   const [isComplete, setIsComplete] = createSignal(false)
   const [currCard, setCurrCard] = createSignal()
   const currDeck = () => isComplete() ? wordDeck : charDeck
@@ -34,18 +35,20 @@ export default function useDecks({ rows }) {
       }),
     ))
   const [furigana] = createResource(
-    async () => (await fetch(`/week-1/assets/furigana.json`)).json(),
+    async () => (await fetch(`/tools/hiragana/assets/furigana.json`)).json(),
   )
 
   createEffect(() => {
     if (!deckResponses()) return { chars: [], words: [] }
-    const chars = [], words = []
     deckResponses().forEach((deck) => {
-      deck.notes.forEach((row) => (row[0].length > 1 ? words : chars).push(row))
+      deck.notes.forEach(([kana, romaji, english, kanji]) => {
+        const row = { kana, romaji, english, kanji }
+        if (kana.length > 1) wordDeck.addCard(kana, row)
+        else charDeck.addCard(kana, row)
+      })
     })
-    charDeck = createDeck('chars', chars, basic)
-    wordDeck = createDeck('words', words, infiniSched)
-    setCurrCard(isComplete() ? wordDeck.getNext() : charDeck.getNext())
+
+    setCurrCard(isComplete() ? wordDeck.getNext(1)[0] : charDeck.getNext(1)[0])
   })
 
   const howl = createMemo(() => {
@@ -66,37 +69,24 @@ export default function useDecks({ rows }) {
   return {
     answerCurrent: (grade) => {
       if (deckResponses.loading) return null
-      currDeck().answerCurrent(grade)
+      currCard().answer(currDeck().scheduler, grade)
     },
     getNext: () => {
       if (deckResponses.loading) return null
-      setCurrCard(currDeck().getNext())
+      setCurrCard(currDeck().getNext(1)[0])
     },
     playAudio: (key) => howl().play(key),
     skipToWords: () => setIsComplete(true),
     isComplete,
     isLoaded: () => !deckResponses.loading,
-    kana: () => currCard()?.note?.content?.kana || '',
-    english: () => currCard()?.note?.content?.english || '',
+    kana: () => currCard()?.content?.kana || '',
+    english: () => currCard()?.content?.english || '',
     kanji: () => {
-      const kanji = currCard()?.note?.content?.kanji || ''
+      const kanji = currCard()?.content?.kanji || ''
       const text = (furigana()?.[kanji] || kanji).trim()
-      const kana = currCard()?.note?.content?.kana
+      const kana = currCard()?.content?.kana
       return (text !== kana) ? text : ''
     },
-    romaji: () => currCard()?.note?.content?.romaji || '',
+    romaji: () => currCard()?.content?.romaji || '',
   }
-}
-
-function createDeck(name, notes, scheduler) {
-  const deck = fromOBJ({
-    id: name,
-    name,
-    desc: name,
-    fields: ['kana', 'romaji', 'english', 'kanji'],
-    notes,
-  }, { sortField: 'kana' })
-  deck.scheduler = scheduler
-  deck.addTemplate('default', '', '')
-  return deck
 }

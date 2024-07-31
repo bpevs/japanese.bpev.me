@@ -1,6 +1,6 @@
 import { walk } from 'jsr:@std/fs'
-import Kuroshiro from 'npm:kuroshiro'
-import KuromojiAnalyzer from 'npm:kuroshiro-analyzer-kuromoji'
+import Kuroshiro from 'kuroshiro'
+import KuromojiAnalyzer from 'kuroshiro-analyzer-kuromoji'
 
 const kuroshiro = new (Kuroshiro.default)()
 await kuroshiro.init(new KuromojiAnalyzer())
