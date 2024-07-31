@@ -23,7 +23,8 @@ declare global {
 }
 
 import Hiragana from '$tools/hiragana/site/main.tsx'
-import KatakanaPokemon from '$tools/katakana/site/main.tsx'
+import Katakana from '$tools/katakana/site/main.tsx'
+import Journal from '$tools/journal/site/main.tsx'
 
 function Link({ name, href }) {
   const location = useLocation()
@@ -44,6 +45,7 @@ function Layout(props) {
       <header class='bg-black w-100 ph3 pv3 pv4-ns ph4-m ph5-l'>
         <nav class='f6 fw6 ttu tracked'>
           <Link href='/' name='Home' />
+          <Link href='/tools/journal' name='Journal' />
           <Link href='/tools/hiragana' name='Hiragana' />
           <Link href='/tools/katakana' name='Katakana' />
         </nav>
@@ -59,7 +61,8 @@ function App() {
       <Router root={Layout}>
         <Route path='/' component={Readme} />
         <Route path='/tools/hiragana' component={Hiragana} />
-        <Route path='/tools/katakana' component={KatakanaPokemon} />
+        <Route path='/tools/journal' component={Journal} />
+        <Route path='/tools/katakana' component={Katakana} />
       </Router>
     </div>
   )
