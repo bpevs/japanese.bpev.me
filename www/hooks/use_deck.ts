@@ -15,10 +15,9 @@ export default function useDeck({
   const [currCard, setCurrCard] = createSignal(null)
 
   const [data] = createResource(deckURL, async () => {
-    const resp = await fetch(deckURL)
-    const data = await resp.json()
-    return data
+    return (await fetch(deckURL)).json()
   })
+
   createEffect(() => {
     if (data.loading) return null
     deck = new Deck(scheduler)

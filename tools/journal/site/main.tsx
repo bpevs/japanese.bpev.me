@@ -1,12 +1,165 @@
-import { createEffect, createResource, createSignal, For, Show } from 'solid-js'
+import { createEffect, createSignal, For } from 'solid-js'
+import { createStore } from 'solid-js/store'
 
-const waniSubjectsUrl = 'https://api.wanikani.com/v2/subjects?types=vocabulary'
+/** Words to be used in an entry; url links back to definition / source **/
+interface Word {
+  characters: string
+  url: string
+}
 
-async function fetchWani(token) {
+/**
+ * An entry is a combination of user-inputed response + reccomended daily words.
+ * The recommended words change daily
+ */
+interface Entry {
+  words: Word[]
+  text: string
+  date: string
+}
+
+const [wanikaniToken, setWanikaniToken] = createSignal(
+  localStorage.getItem('wani-kani-token') || '',
+)
+
+const entries = getEntries()
+const dates = entries.length ? entries.map((entry) => entry.date) : [getDateString()]
+export default function Journal() {
+  let waniTokenInputRef
+  const [currDate, setCurrDate] = createSignal(new Date())
+  const [entry, setEntry] = createStore<Entry>({
+    text: '',
+    words: [],
+    date: getDateString(currDate()),
+  })
+
+  createEffect(async () => {
+    const entry = await getEntry(currDate())
+    setEntry(entry)
+  })
+
+  return (
+    <article class='lh-copy measure pt4' style='margin: auto;'>
+      <details>
+        <summary>Settings</summary>
+        <form
+          class='pa4 black-80'
+          onSubmit={() => {
+            const value = waniTokenInputRef.value
+            setWanikaniToken(value)
+            localStorage.setItem('wani-kani-token', value || '')
+          }}
+        >
+          <div class='measure'>
+            <label for='name' class='f6 b db mb2'>WaniKani Token</label>
+            <input
+              class='input-reset ba pa2 mb2 db w-100'
+              type='text'
+              ref={waniTokenInputRef}
+              value={wanikaniToken()}
+            />
+            <small id='name-desc' class='f6 black-60 db mb2'>
+              Pulls "known" vocabulary from WaniKani
+            </small>
+          </div>
+          <button>update settings</button>
+        </form>
+      </details>
+
+      <select
+        onChange={(e) => {
+          setCurrDate(new Date(e.currentTarget.value))
+        }}
+      >
+        <For each={dates}>
+          {(dateString: string) => (
+            <option
+              value={dateString}
+              selected={dateString === currDate() ? 'selected' : ''}
+            >
+              {dateString}
+            </option>
+          )}
+        </For>
+      </select>
+
+      <h2>{entry.dateString}</h2>
+      <h3>Today's words:</h3>
+
+      <div class='measure'>
+        <div>
+          <For each={entry.words}>
+            {({ url, characters }: Word) => {
+              return (
+                <a
+                  target='_blank'
+                  style={`color: black; background-color: ${entry.text.includes(characters) ? '#ADD8E6' : 'white'}`}
+                  class='dib pa2 ba br2 ma2 f4 no-underline'
+                  href={url}
+                >
+                  {characters}
+                </a>
+              )
+            }}
+          </For>
+        </div>
+      </div>
+
+      <div class='pv4'>
+        <textarea
+          class='f5 db border-box hover-black w-100 measure ba pa2 br2 mb2'
+          rows='10'
+          value={entry.text}
+          onInput={(e) => setEntry('text', e.target.value)}
+        />
+        <button onClick={() => saveEntry(entry)}>Save</button>
+      </div>
+    </article>
+  )
+}
+
+function getDateString(date: Date = new Date()) {
+  return date.toLocaleDateString().split(',')[0]
+}
+
+function getEntries(): { [dateString: string]: Entry } {
+  try {
+    const entries = JSON.parse(localStorage.getItem('journal-entries') || '[]')
+    if (Array.isArray(entries)) return entries
+    return []
+  } catch {
+    return []
+  }
+}
+
+function saveEntry(newEntry: Entry) {
+  const isNew = !getEntries()
+    .find((entry: Entry) => entry.date === newEntry.date)
+  let entries = getEntries()
+
+  if (isNew) entries.push(newEntry)
+  else {
+    entries = entries
+      .map((entry) => (entry.date === newEntry.date) ? newEntry : entry)
+  }
+
+  localStorage.setItem('journal-entries', JSON.stringify(entries))
+}
+
+async function getEntry(date?: Date): Entry | null {
+  const dateString = getDateString(date)
+  const entry = getEntries().find((entry: Entry) => entry.date === dateString)
+
+  if (entry) return entry
+  if (!wanikaniToken()) return null
+  const words: Word[] = await fetchWanikanaVocab(wanikaniToken())
+  return { words, text: '', date: dateString }
+}
+
+async function fetchWanikanaVocab(token: string) {
   if (!token) return []
 
-  const url = waniSubjectsUrl
-  const headers = { 'Authorization': token }
+  const url = 'https://api.wanikani.com/v2/subjects?types=vocabulary'
+  const headers = { 'Authorization': 'Bearer ' + token }
   const options = { headers, method: 'GET' }
 
   try {
@@ -29,82 +182,9 @@ async function fetchWani(token) {
   } catch (error) {
     console.error(error)
   }
-}
 
-const initialWaniToken = localStorage.getItem('wani-kani-token') || ''
-
-export default function Journal() {
-  let waniTokenInputRef
-  const [entry, setEntry] = createSignal('')
-  const [wanikaniToken, setWanikaniToken] = createSignal(initialWaniToken)
-  const [waniVocabulary] = createResource(wanikaniToken, fetchWani)
-
-  return (
-    <article class='lh-copy measure pt4' style='margin: auto;'>
-      <form class='pa4 black-80'>
-        <div class='measure'>
-          <label for='name' class='f6 b db mb2'>WaniKani Token</label>
-          <input
-            class='input-reset ba pa2 mb2 db w-100'
-            type='text'
-            ref={waniTokenInputRef}
-            value={initialWaniToken}
-          />
-          <small id='name-desc' class='f6 black-60 db mb2'>
-            Pulls "known" vocabulary from WaniKani
-          </small>
-        </div>
-
-        <button
-          onClick={() => {
-            const value = waniTokenInputRef.value
-            setWanikaniToken(value)
-            localStorage.setItem('wani-kani-token', value || '')
-          }}
-        >
-          update token
-        </button>
-      </form>
-
-      <div class='measure pa4'>
-        <Show
-          when={waniVocabulary.loading}
-          fallback='The words of the day!'
-        >
-          loading...
-        </Show>
-
-        <div>
-          <For each={waniVocabulary()}>
-            {({ url, characters }) => {
-              return (
-                <a
-                  target='_blank'
-                  style={`color: black; background-color: ${entry().includes(characters) ? '#ADD8E6' : 'white'}`}
-                  class='dib pa2 ba br2 ma2 f4 no-underline'
-                  href={url}
-                >
-                  {characters}
-                </a>
-              )
-            }}
-          </For>
-        </div>
-      </div>
-
-      <div class='pa4'>
-        <textarea
-          class='f5 db border-box hover-black w-100 measure ba pa2 br2 mb2'
-          rows='10'
-          value={entry()}
-          onInput={(e) => setEntry(e.target.value)}
-        />
-      </div>
-    </article>
-  )
-}
-
-function sample(arr, num) {
-  const shuffled = arr.sort(() => 0.5 - Math.random())
-  return shuffled.slice(0, num)
+  function sample(arr, num) {
+    const shuffled = arr.sort(() => 0.5 - Math.random())
+    return shuffled.slice(0, num)
+  }
 }
