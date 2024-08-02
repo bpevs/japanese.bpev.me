@@ -22,7 +22,13 @@ const [wanikaniToken, setWanikaniToken] = createSignal(
 )
 
 const entries = getEntries()
-const dates = entries.length ? entries.map((entry) => entry.date) : [getDateString()]
+const dates = [
+  ...new Set(
+    entries.map((entry) => entry.date)
+      .concat([getDateString()]),
+  ),
+]
+
 export default function Journal() {
   let waniTokenInputRef
   const [currDate, setCurrDate] = createSignal(new Date())
@@ -35,7 +41,6 @@ export default function Journal() {
   createEffect(async () => {
     const entry = await getEntry(currDate())
     setEntry(entry)
-    console.log(entry.date)
   })
 
   return (
@@ -185,8 +190,21 @@ async function fetchWanikanaVocab(token: string) {
   }
 
   function sample(arr, num) {
-    console.log(arr)
-    const shuffled = arr.sort(() => 0.5 - Math.random())
+    const shuffled = shuffle(arr)
     return shuffled.slice(0, num)
+  }
+
+  function shuffle(array) {
+    let currentIndex = array.length
+
+    while (currentIndex != 0) {
+      const randomIndex = Math.floor(Math.random() * currentIndex)
+      currentIndex--
+      ;[array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ]
+    }
+    return array
   }
 }
