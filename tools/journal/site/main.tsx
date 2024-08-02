@@ -35,6 +35,7 @@ export default function Journal() {
   createEffect(async () => {
     const entry = await getEntry(currDate())
     setEntry(entry)
+    console.log(entry.date)
   })
 
   return (
@@ -74,7 +75,7 @@ export default function Journal() {
           {(dateString: string) => (
             <option
               value={dateString}
-              selected={dateString === currDate() ? 'selected' : ''}
+              selected={dateString === entry.date}
             >
               {dateString}
             </option>
@@ -83,7 +84,7 @@ export default function Journal() {
       </select>
 
       <h2>{entry.dateString}</h2>
-      <h3>Today's words:</h3>
+      <h3>今日の字:</h3>
 
       <div class='measure'>
         <div>
@@ -184,6 +185,7 @@ async function fetchWanikanaVocab(token: string) {
   }
 
   function sample(arr, num) {
+    console.log(arr)
     const shuffled = arr.sort(() => 0.5 - Math.random())
     return shuffled.slice(0, num)
   }
