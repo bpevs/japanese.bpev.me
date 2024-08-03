@@ -19,7 +19,6 @@ export default function useDeck({
   createEffect(() => {
     if (deck.loading) return null
     setCurrCard(deck().getNext(1)[0])
-    console.log(currCard())
     setLoaded(true)
   })
 
@@ -38,7 +37,6 @@ export default function useDeck({
     currCard,
     setCurrCard,
     playAudio: (key: string) => {
-      console.log(key)
       if (howl()) howl().play(key)
     },
   }

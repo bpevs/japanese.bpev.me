@@ -43,12 +43,10 @@ export default function useDecks({ rows }) {
     if (!deckResponses()) return { chars: [], words: [] }
     deckResponses().forEach((deck) => {
       deck.cards.forEach(({ content }) => {
-        console.log(content)
         if (content.kana?.length > 1) wordDeck.addCard(content.kana, content)
         else charDeck.addCard(content.kana, content)
       })
     })
-    console.log(charDeck.cards)
 
     setCurrCard(isComplete() ? wordDeck.getNext(1)[0] : charDeck.getNext(1)[0])
   })
