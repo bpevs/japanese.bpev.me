@@ -1,6 +1,7 @@
 import { createEffect, createMemo, createResource, createSignal } from 'solid-js'
 import deckToSprites from '$/utils/deck_to_sprites.ts'
 import infiniSched from '$/scheduler.ts'
+import fromTsv from '$/utils/tsv_to_deck.ts'
 import basic from '@bpev/flashcards/schedulers/basic'
 import { Deck } from '@bpev/flashcards'
 import { Howl } from 'howler'
@@ -26,11 +27,11 @@ export default function useDecks({ rows }) {
   const [currCard, setCurrCard] = createSignal()
   const currDeck = () => isComplete() ? wordDeck : charDeck
 
-  const deckURLs = () => rows().map((row) => `${rootPath}/flashcards/${filenameMap[row]}.json`)
+  const deckURLs = () => rows().map((row) => `${rootPath}/flashcards/${filenameMap[row]}.tsv`)
   const [deckResponses] = createResource(deckURLs, () =>
     Promise.all(
       deckURLs().map(async (url) => {
-        if (!cache[url]) cache[url] = await (await fetch(url)).json()
+        if (!cache[url]) cache[url] = fromTsv(await (await fetch(url)).text(), basic)
         return cache[url]
       }),
     ))
@@ -41,12 +42,13 @@ export default function useDecks({ rows }) {
   createEffect(() => {
     if (!deckResponses()) return { chars: [], words: [] }
     deckResponses().forEach((deck) => {
-      deck.notes.forEach(([kana, romaji, english, kanji]) => {
-        const row = { kana, romaji, english, kanji }
-        if (kana.length > 1) wordDeck.addCard(kana, row)
-        else charDeck.addCard(kana, row)
+      deck.cards.forEach(({ content }) => {
+        console.log(content)
+        if (content.kana?.length > 1) wordDeck.addCard(content.kana, content)
+        else charDeck.addCard(content.kana, content)
       })
     })
+    console.log(charDeck.cards)
 
     setCurrCard(isComplete() ? wordDeck.getNext(1)[0] : charDeck.getNext(1)[0])
   })
@@ -60,10 +62,14 @@ export default function useDecks({ rows }) {
       const deck = deckResponses()[index]
       const sprite = deckToSprites('kana', deck)
       const howler = new Howl({ src, sprite })
-      deck.notes.forEach((note) => howlerMap[note[0]] = howler)
+      deck.cards.forEach(({ content }) => howlerMap[content.kana] = howler)
     })
 
-    return { play: (kana) => howlerMap[kana].play(kana) }
+    return {
+      play: (kana) => {
+        if (kana) howlerMap[kana].play(kana)
+      },
+    }
   })
 
   return {

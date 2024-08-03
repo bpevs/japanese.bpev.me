@@ -22,6 +22,7 @@
       "jsr:@std/encoding@^0.216.0": "jsr:@std/encoding@0.216.0",
       "jsr:@std/fs": "jsr:@std/fs@0.216.0",
       "jsr:@std/fs@0.216": "jsr:@std/fs@0.216.0",
+      "jsr:@std/fs@^1.0.0": "jsr:@std/fs@1.0.0",
       "jsr:@std/io@0.216": "jsr:@std/io@0.216.0",
       "jsr:@std/jsonc@0.213": "jsr:@std/jsonc@0.213.1",
       "jsr:@std/path@0.213": "jsr:@std/path@0.213.1",
@@ -29,6 +30,7 @@
       "jsr:@std/path@0.216": "jsr:@std/path@0.216.0",
       "jsr:@std/path@^0.216.0": "jsr:@std/path@0.216.0",
       "jsr:@std/path@^1.0.1": "jsr:@std/path@1.0.2",
+      "jsr:@std/path@^1.0.2": "jsr:@std/path@1.0.2",
       "npm:@material/material-color-utilities@0.2.7": "npm:@material/material-color-utilities@0.2.7",
       "npm:@solidjs/router": "npm:@solidjs/router@0.14.1_solid-js@1.8.16__seroval@1.0.5",
       "npm:core-js": "npm:core-js@3.36.1",
@@ -141,6 +143,12 @@
         "dependencies": [
           "jsr:@std/assert@^0.216.0",
           "jsr:@std/path@^0.216.0"
+        ]
+      },
+      "@std/fs@1.0.0": {
+        "integrity": "d72e4a125af7168d717a2ed1dca77a728b422b0d138fd20579e3fa41a77da943",
+        "dependencies": [
+          "jsr:@std/path@^1.0.2"
         ]
       },
       "@std/io@0.216.0": {

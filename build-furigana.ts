@@ -1,4 +1,6 @@
-import { walk } from 'jsr:@std/fs'
+import basic from '@bpev/flashcards/schedulers/basic'
+import fromTsv from '$/utils/tsv_to_deck.ts'
+import { walk } from '@std/fs'
 import Kuroshiro from 'kuroshiro'
 import KuromojiAnalyzer from 'kuroshiro-analyzer-kuromoji'
 
@@ -7,26 +9,24 @@ await kuroshiro.init(new KuromojiAnalyzer())
 
 for await (const entry of walk('.')) {
   if (entry.isDirectory || entry.isSymlink) continue
-  if (/furigana\.json/.test(entry.path)) continue
+  if (/\.tsv$/.test(entry.path) === false) continue
 
-  const week = entry.path.match(/^(week-\d+)\/.*\.json$/)?.[1]
-  if (!week) continue
+  const name = entry.path.split('/')[1]
+  if (!name) continue
 
   const deckText = await Deno.readTextFile(entry.path)
-  const deck = JSON.parse(deckText)
+  const deck = fromTsv(deckText, basic)
 
-  const furiganaPath = `./${week}/assets/furigana.json`
+  const furiganaPath = `./tools/${name}/assets/furigana.json`
   const furigana = JSON.parse(await Deno.readTextFile(furiganaPath))
 
-  for (let i = 0; i < deck.notes.length; i++) {
-    const kanjiIndex = deck.fields.indexOf('kanji')
-    const note = deck.notes[i]
-    if (!note[kanjiIndex]) continue
-    furigana[note[kanjiIndex]] = await kuroshiro.convert(note[kanjiIndex], {
+  for (let i = 0; i < deck.cards.length; i++) {
+    const { kanji } = deck.cards[i].content || ''
+    if (!kanji) continue
+    furigana[kanji] = await kuroshiro.convert(kanji, {
       mode: 'furigana',
       to: 'hiragana',
     })
   }
-
-  await Deno.writeTextFile(furiganaPath, JSON.stringify(furigana, null, 2))
+  await Deno.writeTextFile(furiganaPath, JSON.stringify(furigana, null, 2) + '\n')
 }

@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createResource, createSignal } from 'solid-js'
-import { Deck } from '@bpev/flashcards'
+import fromTsv from '$/utils/tsv_to_deck.ts'
 import basic from '@bpev/flashcards/schedulers/basic'
 import { Howl } from 'howler'
 import deckToSprites from '$/utils/deck_to_sprites.ts'
@@ -7,43 +7,38 @@ import deckToSprites from '$/utils/deck_to_sprites.ts'
 export default function useDeck({
   audioURL,
   deckURL,
-  filter = (i) => Boolean(i),
   scheduler = basic,
 }) {
-  let deck
   const [loaded, setLoaded] = createSignal(false)
   const [currCard, setCurrCard] = createSignal(null)
 
-  const [data] = createResource(deckURL, async () => {
-    return (await fetch(deckURL)).json()
+  const [deck] = createResource(deckURL, async () => {
+    return fromTsv(await (await fetch(deckURL)).text(), scheduler)
   })
 
   createEffect(() => {
-    if (data.loading) return null
-    deck = new Deck(scheduler)
-    data().notes.forEach((note) => {
-      const [image, kana] = note
-      if (filter(note)) deck.addCard(kana, { image, kana })
-    })
-    setCurrCard(deck.getNext(1)[0])
+    if (deck.loading) return null
+    setCurrCard(deck().getNext(1)[0])
+    console.log(currCard())
     setLoaded(true)
   })
 
   const howl = createMemo(() => {
-    if (!data.loading) {
+    if (!deck.loading) {
       return new Howl({
         src: [audioURL],
-        sprite: deckToSprites('kana', data()),
+        sprite: deckToSprites('kana', deck()),
       })
     }
   })
 
   return {
-    deck: () => deck,
+    deck,
     loaded,
     currCard,
     setCurrCard,
     playAudio: (key: string) => {
+      console.log(key)
       if (howl()) howl().play(key)
     },
   }

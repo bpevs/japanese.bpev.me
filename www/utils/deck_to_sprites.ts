@@ -4,14 +4,13 @@ interface Sprites {
 
 const clipLength = 2000
 
-export default function deckToSprites(key: string, deck): Sprites {
+export default function deckToSprites(key: string, deck: Deck): Sprites {
   if (!deck) return
   const sprites: Sprites = {}
-  const nameIndex = deck.fields.indexOf(key)
 
-  deck.notes.forEach((card: string[], index) => {
-    const startTime = index * clipLength
-    const name = card[nameIndex]
+  deck.cards.forEach((card: Card) => {
+    const startTime = card.content.index * clipLength
+    const name = card.content[key]
     sprites[name] = [startTime, clipLength]
   })
 

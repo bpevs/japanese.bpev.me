@@ -1,21 +1,22 @@
+import basic from '@bpev/flashcards/schedulers/basic'
 import { Column, stringify } from '@std/csv/stringify'
 import { walk } from '@std/fs'
+import fromTsv from '$/utils/tsv_to_deck.ts'
 
 for await (const entry of walk('.')) {
   if (entry.isDirectory || entry.isSymlink) continue
-  if (/furigana\.json/.test(entry.path)) continue
-  if (/matrix.*\.json/.test(entry.path)) continue
+  if (/\.tsv?/.test(entry.path) === false) continue
 
-  const week = entry.path.match(/^(week-\d+)\/.*\.json$/)?.[1]
-  if (!week) continue
+  const name = entry.path.match(/^.*\/(.*)\.tsv$/)?.[1]
+  if (!name) continue
 
   const deckText = await Deno.readTextFile(entry.path)
-  const deckData = JSON.parse(deckText)
+  const deckData = fromTsv(deckText, basic)
 
   await Deno.writeTextFile(
     entry.path
       .replace('flashcards', 'matrix')
-      .replace('json', 'csv'),
+      .replace('tsv', 'csv'),
     formatDeckToAudioRegions(deckData),
   )
 }
@@ -28,21 +29,19 @@ interface Region {
   length: string
 }
 
-function formatDeckToAudioRegions({ fields, notes, meta }) {
-  const { length = 1, primary } = meta
-  const primaryIndex = fields.indexOf(primary)
-
+function formatDeckToAudioRegions(deck: Deck) {
+  const AUDIO_LENGTH_S = 1
   let start = 1
-  const regions: regionArr = notes.map((note, index): Region => {
-    if (index) start += length
-    const end = start + length
+  const regions: regionArr = deck.cards.map((card, index): Region => {
+    if (index) start += AUDIO_LENGTH_S
+    const end = start + AUDIO_LENGTH_S
 
     return {
       '#': `R${index}`,
-      name: note[primaryIndex],
+      name: card.content.kana,
       start: `${start}.1.00`,
       end: `${end}.1.00`,
-      length: `${length}.0.00`,
+      length: `${AUDIO_LENGTH_S}.0.00`,
     }
   })
 

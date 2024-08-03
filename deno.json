@@ -22,6 +22,7 @@
   },
   "tasks": {
     "build": "deno run -A build.ts build",
+    "build:audio-matrix": "deno run --allow-read --allow-write build-audio-matrix.ts",
     "build:furigana": "deno run --allow-read --allow-write build-furigana.ts",
     "dev": "deno run -A build.ts dev",
     "test": "deno fmt && deno lint && deno test -A"

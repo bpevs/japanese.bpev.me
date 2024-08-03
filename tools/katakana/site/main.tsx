@@ -15,7 +15,7 @@ export default function Katakana() {
   let selectRef
 
   const [selected, setSelected] = createSignal('pokemon')
-  const deckURL = () => `${rootPath}/flashcards/${selected()}.json`
+  const deckURL = () => `${rootPath}/flashcards/${selected()}.tsv`
   const [settings, setSettings] = createStore({
     practiceType: Typing,
     displayType: Furigana,
