@@ -39,12 +39,11 @@ export default function Journal() {
   })
 
   createEffect(async () => {
-    const entry = await getEntry(currDate())
-    setEntry(entry)
+    setEntry(await getEntry(currDate()))
   })
 
   return (
-    <article class='lh-copy measure pt4' style='margin: auto;'>
+    <article class='lh-copy measure pa2' style='margin: auto;'>
       <details>
         <summary>Settings</summary>
         <form
@@ -123,8 +122,12 @@ export default function Journal() {
   )
 }
 
+// Format date to yyyy-mm-dd
 function getDateString(date: Date = new Date()) {
-  return date.toLocaleDateString().split(',')[0]
+  const year = date.getFullYear().toString()
+  const month = (date.getMonth() + 101).toString().substring(1)
+  const day = (date.getDate() + 100).toString().substring(1)
+  return year + '-' + month + '-' + day
 }
 
 function getEntries(): { [dateString: string]: Entry } {
