@@ -1,5 +1,6 @@
 import { createEffect, createSignal, For } from 'solid-js'
 import { createStore } from 'solid-js/store'
+import { createApiClient } from '@bpev/japanese/wanikani'
 
 /** Words to be used in an entry; url links back to definition / source **/
 interface Word {
@@ -17,6 +18,7 @@ interface Entry {
   date: string
 }
 
+const api = createApiClient('https://api.wanikani.com/v2')
 const [wanikaniToken, setWanikaniToken] = createSignal(
   localStorage.getItem('wani-kani-token') || '',
 )
@@ -167,47 +169,40 @@ async function getEntry(date?: Date): Entry | null {
 async function fetchWanikanaVocab(token: string) {
   if (!token) return []
 
-  const url = 'https://api.wanikani.com/v2/subjects?types=vocabulary'
   const headers = { 'Authorization': 'Bearer ' + token }
-  const options = { headers, method: 'GET' }
 
   try {
-    const userResp = await fetch('https://api.wanikani.com/v2/user', options)
-    const userData = await userResp.json()
-    const userLevel = Math.max(userData.data.level - 1, 0)
-    const vocabLevels = []
-    for (let i = userLevel; i > 0; i--) vocabLevels.push(i)
-    const levelsParam = `&levels=${vocabLevels.join(',')}`
+    const userData = await api.getUser({ headers })
 
-    const subjectsResp = await fetch(url + levelsParam, options)
-    const data = await subjectsResp.json()
-    const vocabulary = sample(data.data, 5)
+    const userLevel = Math.max(userData.data.level - 1, 0)
+    const levels = []
+    for (let i = userLevel; i > 0; i--) levels.push(i)
+
+    const params = { levels, types: 'vocabulary' }
+    const data = await api.getSubjects({ headers, params })
+
+    return sample(data.data, 5)
       .map((item) => {
         const url = item.data.document_url
         const characters = item.data.characters
         return { url, characters }
       })
-    return vocabulary
   } catch (error) {
     console.error(error)
   }
 
-  function sample(arr, num) {
-    const shuffled = shuffle(arr)
-    return shuffled.slice(0, num)
-  }
-
-  function shuffle(array) {
-    let currentIndex = array.length
+  function sample(arr, num: number) {
+    const arrCopy = arr.slice()
+    let currentIndex = arrCopy.length
 
     while (currentIndex != 0) {
       const randomIndex = Math.floor(Math.random() * currentIndex)
       currentIndex--
-      ;[array[currentIndex], array[randomIndex]] = [
-        array[randomIndex],
-        array[currentIndex],
+      ;[arrCopy[currentIndex], arrCopy[randomIndex]] = [
+        arrCopy[randomIndex],
+        arrCopy[currentIndex],
       ]
     }
-    return array
+    return arrCopy.slice(0, num)
   }
 }

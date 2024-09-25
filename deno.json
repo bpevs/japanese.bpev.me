@@ -31,15 +31,18 @@
     "$/": "./www/",
     "$tools/": "./tools/",
     "@bpev/flashcards": "jsr:@bpev/flashcards@1.0.0-beta.0",
+    "@bpev/japanese/wanikani": "./lib/api/wanikani/mod.ts",
     "@inro/ui": "jsr:@inro/ui@0.0.1-alpha-1",
     "@std/csv": "jsr:@std/csv@^0.224.3",
     "@std/fs": "jsr:@std/fs@^1.0.0",
+    "@zodios/core": "npm:@zodios/core@^10.9.6",
     "howler": "npm:howler",
     "kuroshiro": "npm:kuroshiro",
     "kuroshiro-analyzer-kuromoji": "npm:kuroshiro-analyzer-kuromoji",
     "solid-js": "npm:solid-js",
     "solid-js/router": "npm:@solidjs/router",
     "solid-js/store": "npm:solid-js/store",
-    "solid-js/web": "npm:solid-js/web"
+    "solid-js/web": "npm:solid-js/web",
+    "zod": "npm:zod@^3.23.8"
   }
 }

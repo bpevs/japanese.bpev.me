@@ -1,0 +1,385 @@
+openapi: 3.0.0
+info:
+  title: MaruMori
+  version: 1.0.0
+servers:
+  - url: https://public-api.marumori.io
+paths:
+  /home:
+    get:
+      tags:
+        - default
+      summary: Home
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /known/kanji:
+    get:
+      tags:
+        - default
+      summary: Get Known Kanji
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Items'
+              example: {
+                "success": true,
+                "items": [
+                  {
+                    "_id": "Kanji/3957933",
+                    "item": "英",
+                    "level": 7
+                  },
+                  {
+                    "_id": "Kanji/3957606",
+                    "item": "安",
+                    "level": 9001
+                  }
+                ]
+              }
+  /known/vocabulary:
+    get:
+      tags:
+        - default
+      summary: Get Known Vocab
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Items'
+              example: {
+                "success": true,
+                "items": [
+                  {
+                    "_id": "VocabularyForms/31272879",
+                    "item": "出場",
+                    "level": 1
+                  },
+                  {
+                    "_id": "VocabularyForms/31337975",
+                    "item": "会場",
+                    "level": 1
+                  }
+                ]
+              }
+  /srs/grammar-lessons:
+    get:
+      tags:
+        - default
+      summary: Get Grammar SRS Lessons
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /srs/grammar-reviews:
+    get:
+      tags:
+        - default
+      summary: Get Grammar SRS Reviews
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /srs/lessons:
+    get:
+      tags:
+        - default
+      summary: Get SRS Lessons
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /srs/reviews:
+    get:
+      tags:
+        - default
+      summary: Get SRS Reviews
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /studylists:
+    get:
+      tags:
+        - default
+      summary: Get Study Lists
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /studylists/{id}:
+    get:
+      tags:
+        - default
+      summary: Get Study List
+      description: Retrieves a specific studylist by its id.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /studylists/items/add:
+    post:
+      tags:
+        - default
+      summary: Add Items to Study List
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                _key: '179211463'
+                items:
+                  - VocabularyForms/31345975
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /studylists/items/add/new:
+    post:
+      tags:
+        - default
+      summary: Create a New Study List with Items
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                items:
+                  - VocabularyForms/31345975
+                title: AddNew2
+                description: AddNew2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /studylists/items/personal:
+    post:
+      tags:
+        - default
+      summary: Edit Personal Item Notes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                itemid: VocabularyForms/31345975
+                notes: note
+                synonyms:
+                  - anyways
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /studylists/items/remove:
+    post:
+      tags:
+        - default
+      summary: Remove Items from Study List
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                studylist: StudyLists/179211463
+                items:
+                  - VocabularyForms/31345975
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /studylists/items/suspend:
+    post:
+      tags:
+        - default
+      summary: Suspend Items
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                studylist: StudyLists/179211463
+                items:
+                  - VocabularyForms/31345975
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /studylists/items/unsuspend:
+    post:
+      tags:
+        - default
+      summary: Unsuspend Items
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                studylist: StudyLists/179211463
+                items:
+                  - VocabularyForms/31345975
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseError'
+    UnprocessableEntity:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseError'
+  schemas:
+    BaseError:
+      type: object
+      required: [error, code]
+      description: Errors with a message will return with the follow response body structure
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+    BaseResource:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+    Item:
+      type: object
+      required: [ _id, item, level ]
+      properties:
+        _id:
+          type: string
+          format: string
+          description: id for the item
+        item:
+          type: string
+          format: string
+          description: character(s)
+        level:
+          type: integer
+          description: The srs level of the item
+    Items:
+      allOf:
+        - $ref: '#/components/schemas/BaseResource'
+        - type: object
+          required: [ items ]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Item'
+              description: A list of study items
+    StudyLists:
+      allOf:
+        - $ref: '#/components/schemas/BaseResource'
+        - type: object
+          required: [ items ]
+          properties:
+            studyLists:
+              type: array
+              studyLists:
+                $ref: '#/components/schemas/StudyListSummary'
+              description: A list of study list summaries
+    StudyListSummary:
+      type: object
+      required: [  _id, _key, _ref, counts, headerImage, image  ]
+      properties:
+        _id:
+          type: string
+          description: id of the study item
+          example: "StudyLists/PL-1"
+        _key:
+          type: string
+          description: short id of the study item
+          example: "PL-1"
+        _rev:
+          type: string
+          example: "_hxSPQHO---"
+        category:
+          type: integer
+          description: The type of study list (grammar vs srs?)
+        counts:
+          $ref: '#/components/schemas/Item'
+        createdAt:
+          type: number
+        description:
+          type: string
+          example: "All unlockable items found and unlocked as you progress through the main course of MaruMori."
+        headerImage:
+          type: string
+          example: "https://data.marumori.io/main-course/main-study-list-banner.jpg"
+        image:
+          type: string
+          example: "https://data.marumori.io/main-course/main-study-list-card.jpg"
+        isGrammar:
+          type: boolean
+        isMainStudyList:
+          type: boolean
+        slug:
+          type: string
+          example: "marumori-main-course"
+        sortingField:
+          type: string
+          example: "index"
+        title:
+          type: string
+          example: "MaruMori - Kanji & Vocabulary"
+        userKey:
+          type: string
+          example: "1"
+    StudyListCount:
+      type: object
+      required: [ lessons, noProgress, reviews, total, totalProgress ]
+      properties:
+        lessons:
+          type: integer
+          description: number of available lessons
+        noProgress:
+          type: integer
+          description: number of todo items?
+        reviews:
+          type: integer
+          description: number of available reviews
+        total:
+          type: integer
+          description: total number of items
+        totalProgress:
+          type: integer
+          description: total number of items started

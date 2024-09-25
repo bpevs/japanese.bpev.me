@@ -1,0 +1,22 @@
+{
+  "name": "@bpev/japanese",
+  "version": "0.0.1-beta.1",
+  "exports": {
+    "./marumori": "./api/marumori/mod.ts",
+    "./wanikani": "./api/wanikani/mod.ts"
+  },
+  "fmt": {
+    "proseWrap": "preserve",
+    "semiColons": false,
+    "singleQuote": true
+  },
+  "tasks": {
+    "generate": "deno task generate:mm && deno task generate:wk && deno fmt",
+    "generate:mm": "openapi-zod-client ./api/marumori/api/spec.yaml -o './api/marumori/api/mod.ts'",
+    "generate:wk": "openapi-zod-client ./api/wanikani/api/spec.yaml -o './api/wanikani/api/mod.ts'"
+  },
+  "imports": {
+    "@zodios/core": "npm:@zodios/core@^10.9.6",
+    "zod": "npm:zod@^3.23.8"
+  }
+}
