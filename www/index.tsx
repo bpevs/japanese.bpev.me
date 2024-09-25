@@ -25,6 +25,7 @@ declare global {
 import Hiragana from '$tools/hiragana/site/main.tsx'
 import Katakana from '$tools/katakana/site/main.tsx'
 import Journal from '$tools/journal/site/main.tsx'
+import Listify from '$tools/listify/site/main.tsx'
 
 function Link({ name, href }) {
   const location = useLocation()
@@ -48,6 +49,7 @@ function Layout(props) {
           <Link href='/tools/journal' name='Journal' />
           <Link href='/tools/hiragana' name='Hiragana' />
           <Link href='/tools/katakana' name='Katakana' />
+          <Link href='/tools/listify' name='Listify' />
         </nav>
       </header>
       {props.children}
@@ -63,6 +65,7 @@ function App() {
         <Route path='/tools/hiragana' component={Hiragana} />
         <Route path='/tools/journal' component={Journal} />
         <Route path='/tools/katakana' component={Katakana} />
+        <Route path='/tools/listify' component={Listify} />
       </Router>
     </div>
   )

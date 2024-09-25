@@ -43,6 +43,7 @@
     "solid-js/router": "npm:@solidjs/router",
     "solid-js/store": "npm:solid-js/store",
     "solid-js/web": "npm:solid-js/web",
+    "tiny-segmenter": "npm:tiny-segmenter@^0.2.0",
     "zod": "npm:zod@^3.23.8"
   }
 }
